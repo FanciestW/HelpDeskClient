@@ -1,0 +1,23 @@
+{
+  "name": "helpdesk",
+  "version": "1.0.0",
+  "description": "A web application for technicians and their clients/customers.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FanciestW/HelpDesk.git"
+  },
+  "keywords": [
+    "React",
+    "Typescript"
+  ],
+  "author": "William Lin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FanciestW/HelpDesk/issues"
+  },
+  "homepage": "https://github.com/FanciestW/HelpDesk#readme"
+}
