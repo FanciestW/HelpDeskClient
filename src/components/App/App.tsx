@@ -1,32 +1,34 @@
 import React from 'react';
-import { ThemeProvider } from '@material-ui/core';
+import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, responsiveFontSizes, makeStyles } from '@material-ui/core/styles';
 import Dashboard from '../Dashboard/Dashboard';
 import Navbar from '../Navbar/Navbar';
 
-const theme = responsiveFontSizes(createMuiTheme({
-  palette: {
-    type: 'light',
-  },
-}));
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     height: '100vh',
-    backgroundColor: theme.palette.background.default,
   },
 }));
 
-const App = () => {
-  const classes = useStyles();
+const App = (props: AppProps) => {
+  const theme = responsiveFontSizes(createMuiTheme({
+    palette: {
+      type: props.theme || 'light',
+    },
+  }));
+  const classes = useStyles(theme);
   return (
     <ThemeProvider theme={theme}>
-      <div className={classes.root}>
+      <div className={classes.root} style={{backgroundColor: theme.palette.background.default}}>
         <Navbar></Navbar>
         <Dashboard></Dashboard>
       </div>
     </ThemeProvider>
   );
 };
+
+interface AppProps {
+  theme?: 'light' | 'dark';
+}
 
 export default App;
