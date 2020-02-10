@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Button, Card, CardActions, CardContent, CardHeader, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
@@ -25,7 +24,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const DashboardCard = (props: any) => {
+const DashboardCard = (props: DashboardCardProps) => {
   const classes = useStyles();
   return (
     <Card className={classes.card}>
@@ -44,14 +43,11 @@ const DashboardCard = (props: any) => {
   );
 };
 
-DashboardCard.propTypes = {
-  title: PropTypes.string.isRequired,
-  data: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.element,
-  ]),
-  buttonText: PropTypes.string,
-  buttonDestination: PropTypes.string,
-};
+interface DashboardCardProps {
+  title: string,
+  data: any,
+  buttonText?: string | null,
+  buttonDestination?: string | null,
+}
 
 export default DashboardCard;
