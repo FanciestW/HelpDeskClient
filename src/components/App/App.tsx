@@ -1,6 +1,7 @@
 import React from 'react';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, responsiveFontSizes, makeStyles } from '@material-ui/core/styles';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import Dashboard from '../Dashboard/Dashboard';
 import Navbar from '../Navbar/Navbar';
 
@@ -21,7 +22,14 @@ const App = (props: AppProps) => {
     <ThemeProvider theme={theme}>
       <div className={classes.root} style={{backgroundColor: theme.palette.background.default}}>
         <Navbar></Navbar>
-        <Dashboard></Dashboard>
+        <Router>
+          <Switch>
+            <Route path='/dashboard'>
+              <Dashboard />
+            </Route>
+            <Redirect to='404' />
+          </Switch>
+        </Router>
       </div>
     </ThemeProvider>
   );
