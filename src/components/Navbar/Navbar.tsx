@@ -24,7 +24,7 @@ export default function Navbar() {
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" className={classes.title}>
-          Dashboard
+          HelpDesk
         </Typography>
       </Toolbar>
     </AppBar>
