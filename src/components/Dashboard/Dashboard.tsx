@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => ({
 const Dashboard = () => {
   const classes = useStyles();
   const cardTitles = ['Open Cases', 'Upcoming Tasks', 'Clients'];
-  const cardData = [2, 5, 12];
+  const cardData = [mockData.openCases, mockData.openTasks, mockData.numberOfClients];
   const cardButtonText = ['See Open Tickets', 'See Tasks', 'Clients List'];
   const cardButtonDestination = ['google.com', 'github.com', 'linkedin.com'];
   return (
