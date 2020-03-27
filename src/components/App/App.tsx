@@ -4,6 +4,7 @@ import { createMuiTheme, responsiveFontSizes, makeStyles } from '@material-ui/co
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import Dashboard from '../Dashboard/Dashboard';
 import Navbar from '../Navbar/Navbar';
+import NotFound from '../NotFound/NotFound';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -26,6 +27,9 @@ const App = (props: AppProps) => {
           <Switch>
             <Route path='/dashboard'>
               <Dashboard />
+            </Route>
+            <Route path='/404'>
+              <NotFound />
             </Route>
             <Redirect to='404' />
           </Switch>
