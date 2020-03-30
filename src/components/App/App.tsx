@@ -28,10 +28,12 @@ const App = (props: AppProps) => {
             <Route path='/dashboard'>
               <Dashboard />
             </Route>
-            <Route path='/404'>
+            <Route exact path='/'>
+              <Redirect to='dashboard' />
+            </Route>
+            <Route path='/*'>
               <NotFound />
             </Route>
-            <Redirect to='404' />
           </Switch>
         </Router>
       </div>
