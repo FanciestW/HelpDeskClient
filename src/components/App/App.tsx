@@ -15,15 +15,15 @@ const useStyles = makeStyles(() => ({
 const App = (props: AppProps) => {
   const theme = responsiveFontSizes(createMuiTheme({
     palette: {
-      type: props.theme || 'light',
+      type: props.theme || 'dark',
     },
   }));
   const classes = useStyles(theme);
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root} style={{backgroundColor: theme.palette.background.default}}>
-        <Navbar></Navbar>
         <Router>
+          <Navbar />
           <Switch>
             <Route path='/dashboard'>
               <Dashboard />
