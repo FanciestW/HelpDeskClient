@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -21,16 +21,23 @@ const useStyles = makeStyles(theme => ({
       cursor: 'pointer',
     }
   },
+  iconButton: {
+    color: '#FFFFFF',
+  }
 }));
 
 export default function Navbar() {
   const classes = useStyles();
   const history = useHistory();
 
-  const [theme, setTheme] = useState('light');
-
   function toggleTheme() {
-    theme === 'dark' ? setTheme('light') : setTheme('dark');
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme === 'light') {
+      localStorage.setItem('theme', 'dark');
+    } else {
+      localStorage.setItem('theme', 'light');
+    }
+    window.location.reload();
   }
 
   return (
@@ -42,8 +49,8 @@ export default function Navbar() {
         <Typography variant='h6' className={classes.title} onClick={() => history.push('/dashboard')}>
           HelpDesk
         </Typography>
-        <IconButton edge='start' onClick={toggleTheme}>
-          { theme === 'dark' ? <Brightness7Icon /> : <Brightness4Icon /> }
+        <IconButton edge='start' className={classes.iconButton} onClick={toggleTheme}>
+          { localStorage.getItem('theme') === 'dark' ? <Brightness7Icon /> : <Brightness4Icon /> }
         </IconButton>
       </Toolbar>
     </AppBar>

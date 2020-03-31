@@ -12,10 +12,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const App = (props: AppProps) => {
+const App = () => {
   const theme = responsiveFontSizes(createMuiTheme({
     palette: {
-      type: props.theme || 'dark',
+      type: localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
     },
   }));
   const classes = useStyles(theme);
@@ -40,9 +40,5 @@ const App = (props: AppProps) => {
     </ThemeProvider>
   );
 };
-
-interface AppProps {
-  theme?: 'light' | 'dark';
-}
 
 export default App;
