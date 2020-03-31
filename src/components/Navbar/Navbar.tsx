@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -26,6 +26,13 @@ const useStyles = makeStyles(theme => ({
 export default function Navbar() {
   const classes = useStyles();
   const history = useHistory();
+
+  const [theme, setTheme] = useState('light');
+
+  function toggleTheme() {
+    theme === 'dark' ? setTheme('light') : setTheme('dark');
+  }
+
   return (
     <AppBar position='static'>
       <Toolbar>
@@ -35,14 +42,10 @@ export default function Navbar() {
         <Typography variant='h6' className={classes.title} onClick={() => history.push('/dashboard')}>
           HelpDesk
         </Typography>
-        <IconButton edge='start'>
-          { }
+        <IconButton edge='start' onClick={toggleTheme}>
+          { theme === 'dark' ? <Brightness7Icon /> : <Brightness4Icon /> }
         </IconButton>
       </Toolbar>
     </AppBar>
   );
-}
-
-interface NavbarProps {
-  theme?: 'light' | 'dark';
 }
