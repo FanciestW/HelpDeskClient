@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import Dashboard from '../Dashboard/Dashboard';
 import Navbar from '../Navbar/Navbar';
 import NotFound from '../NotFound/NotFound';
+import SignUp from '../SignUp/SignUp';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -27,6 +28,9 @@ const App = () => {
           <Switch>
             <Route path='/dashboard'>
               <Dashboard />
+            </Route>
+            <Route path='/signup'>
+              <SignUp />
             </Route>
             <Route exact path='/'>
               <Redirect to='dashboard' />
