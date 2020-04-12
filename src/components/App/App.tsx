@@ -6,6 +6,7 @@ import Dashboard from '../Dashboard/Dashboard';
 import Navbar from '../Navbar/Navbar';
 import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
+import Login from '../Login/Login';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -31,6 +32,9 @@ const App = () => {
             </Route>
             <Route path='/signup'>
               <SignUp />
+            </Route>
+            <Route path='/login'>
+              <Login />
             </Route>
             <Route exact path='/'>
               <Redirect to='dashboard' />

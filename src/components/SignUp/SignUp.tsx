@@ -11,9 +11,9 @@ import {
   Container,
   CssBaseline,
   FormControlLabel,
-  Link
+  Link,
+  makeStyles,
 } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Avatar from '@material-ui/core/Avatar';
 
