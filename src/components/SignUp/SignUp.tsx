@@ -70,7 +70,8 @@ export default function SignUp() {
                 fullWidth
                 id='firstName'
                 label='First Name'
-                autoComplete='family-name'
+                autoComplete='given-name'
+                value={firstName}
                 onChange={(event: any) => setFirstName(event.target.value)}
               />
             </Grid>
@@ -82,7 +83,8 @@ export default function SignUp() {
                 fullWidth
                 id='lastName'
                 label='Last Name'
-                autoComplete='given-name'
+                autoComplete='family-name'
+                value={lastName}
                 onChange={(event: any) => setLastName(event.target.value)}
               />
             </Grid>
@@ -95,6 +97,7 @@ export default function SignUp() {
                 label='Email Address'
                 name='email'
                 autoComplete='email'
+                value={email}
                 onChange={(event: any) => setEmail(event.target.value)}
               />
             </Grid>
@@ -107,6 +110,7 @@ export default function SignUp() {
                 type='tel'
                 id='phone'
                 autoComplete='tel'
+                value={phone}
                 onChange={(event: any) => setPhone(event.target.value)}
               />
             </Grid>

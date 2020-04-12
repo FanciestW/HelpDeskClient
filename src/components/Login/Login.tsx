@@ -36,6 +36,9 @@ const useStyles = makeStyles((theme: any) => ({
 
 export default function Login() {
   const classes = useStyles();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -56,6 +59,8 @@ export default function Login() {
             label="Email Address"
             name="email"
             autoComplete="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
             autoFocus
           />
           <TextField
@@ -67,6 +72,8 @@ export default function Login() {
             label="Password"
             type="password"
             id="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
             autoComplete="current-password"
           />
           <FormControlLabel
