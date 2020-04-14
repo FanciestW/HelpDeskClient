@@ -34,15 +34,18 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    float: 'right',
   },
 }));
 
 export default function SignUp() {
   const classes = useStyles();
   const [firstName, setFirstName] = useState('');
+  const [middleName, setMiddleName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
   const [isTechnician, setIsTechnician] = useState('no');
@@ -50,9 +53,15 @@ export default function SignUp() {
   const handleIsTechnician = (event: any) => {
     setIsTechnician(event.target.value);
   };
+
+  // const handleSignUp = async () => {
+  //   try {
+  //     const signUpDate = { firstName, lastName, email, password, company, isTechnician }
+  //   }
+  // };
   
   return (
-    <Container component='main' maxWidth='xs'>
+    <Container component='main' maxWidth='md'>
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -63,7 +72,7 @@ export default function SignUp() {
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={4}>
               <TextField autoFocus
                 name='firstName'
                 variant='outlined'
@@ -77,7 +86,20 @@ export default function SignUp() {
                 onChange={(event: any) => setFirstName(event.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                variant='outlined'
+                name='middleName'
+                fullWidth
+                id='middleName'
+                label='Middle Name (Optional)'
+                type='name'
+                autoComplete='additional-name'
+                value={middleName}
+                onChange={(event: any) => setMiddleName(event.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
               <TextField
                 variant='outlined'
                 name='lastName'
@@ -105,7 +127,7 @@ export default function SignUp() {
                 onChange={(event: any) => setEmail(event.target.value)}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 variant='outlined'
                 required
@@ -119,7 +141,21 @@ export default function SignUp() {
                 onChange={(event: any) => setPassword(event.target.value)}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant='outlined'
+                required
+                fullWidth
+                name='confirm-password'
+                label='Confirm Password'
+                type='password'
+                id='password-repeat'
+                autoComplete='current-password'
+                value={confirmPassword}
+                onChange={(event: any) => setConfirmPassword(event.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 variant='outlined'
                 fullWidth
@@ -132,7 +168,7 @@ export default function SignUp() {
                 onChange={(event: any) => setPhone(event.target.value)}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 variant='outlined'
                 fullWidth
@@ -147,7 +183,7 @@ export default function SignUp() {
             </Grid>
             <Grid item xs={12}>
               <FormControl component="fieldset">
-                <FormLabel component="legend">Are You a Technician</FormLabel>
+                <FormLabel component="legend">Are You a Technician?</FormLabel>
                 <RadioGroup aria-label="isTechnician" name="isTechnician" value={isTechnician} onChange={handleIsTechnician}>
                   <FormControlLabel value="yes" control={<Radio color='primary'/>} label="Yes" />
                   <FormControlLabel value="no" control={<Radio color='primary'/>} label="No" />
@@ -157,7 +193,6 @@ export default function SignUp() {
           </Grid>
           <Button
             type='submit'
-            fullWidth
             variant='contained'
             color='primary'
             className={classes.submit}
