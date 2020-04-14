@@ -32,10 +32,10 @@ export default function Navbar() {
 
   function toggleTheme() {
     const currentTheme = localStorage.getItem('theme');
-    if (currentTheme === 'light') {
-      localStorage.setItem('theme', 'dark');
-    } else {
+    if (currentTheme === 'dark') {
       localStorage.setItem('theme', 'light');
+    } else {
+      localStorage.setItem('theme', 'dark');
     }
     window.location.reload();
   }
