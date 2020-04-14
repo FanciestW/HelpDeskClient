@@ -39,12 +39,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
   const classes = useStyles();
-  const [isTechnician, setIsTechnician] = useState('no');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [company, setCompany] = useState('');
+  const [isTechnician, setIsTechnician] = useState('no');
 
   const handleIsTechnician = (event: any) => {
     setIsTechnician(event.target.value);
@@ -70,6 +71,7 @@ export default function SignUp() {
                 fullWidth
                 id='firstName'
                 label='First Name'
+                type='name'
                 autoComplete='given-name'
                 value={firstName}
                 onChange={(event: any) => setFirstName(event.target.value)}
@@ -83,6 +85,7 @@ export default function SignUp() {
                 fullWidth
                 id='lastName'
                 label='Last Name'
+                type='name'
                 autoComplete='family-name'
                 value={lastName}
                 onChange={(event: any) => setLastName(event.target.value)}
@@ -97,8 +100,23 @@ export default function SignUp() {
                 label='Email Address'
                 name='email'
                 autoComplete='email'
+                type='email'
                 value={email}
                 onChange={(event: any) => setEmail(event.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant='outlined'
+                required
+                fullWidth
+                name='password'
+                label='Password'
+                type='password'
+                id='password'
+                autoComplete='current-password'
+                value={password}
+                onChange={(event: any) => setPassword(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -117,15 +135,14 @@ export default function SignUp() {
             <Grid item xs={12}>
               <TextField
                 variant='outlined'
-                required
                 fullWidth
-                name='password'
-                label='Password'
-                type='password'
-                id='password'
-                autoComplete='current-password'
-                value={password}
-                onChange={(event: any) => setPassword(event.target.value)}
+                name='company'
+                label='Company (Optional)'
+                type='name'
+                id='company'
+                autoComplete='organization'
+                value={company}
+                onChange={(event: any) => setCompany(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
