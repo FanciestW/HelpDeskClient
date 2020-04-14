@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import Axios from 'axios';
 import {
   Button,
   Grid,
@@ -38,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp() {
+export default function SignUp(props: any) {
   const classes = useStyles();
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
@@ -54,11 +56,27 @@ export default function SignUp() {
     setIsTechnician(event.target.value);
   };
 
-  // const handleSignUp = async () => {
-  //   try {
-  //     const signUpDate = { firstName, lastName, email, password, company, isTechnician }
-  //   }
-  // };
+  const handleSignUp = async () => {
+    // TODO::verify user inputs
+    try {
+      const signUpData = {
+        firstName,
+        middleName,
+        lastName,
+        email,
+        password,
+        phone,
+        company,
+        isTechnician,
+      };
+      const res = await Axios.post('/api/user/signup', signUpData);
+      localStorage.setItem('authed', (res.status === 200).toString());
+      props.setAuthed(res.status === 200);
+    } catch (err) {
+      console.error(err);
+      // TODO::Show error snackbar
+    }
+  };
   
   return (
     <Container component='main' maxWidth='md'>
@@ -192,10 +210,10 @@ export default function SignUp() {
             </Grid>
           </Grid>
           <Button
-            type='submit'
             variant='contained'
             color='primary'
             className={classes.submit}
+            onClick={handleSignUp}
           >
             Sign Up
           </Button>
@@ -211,3 +229,7 @@ export default function SignUp() {
     </Container>
   );
 }
+
+SignUp.propTypes = {
+  setAuthed: PropTypes.func.isRequired,
+};

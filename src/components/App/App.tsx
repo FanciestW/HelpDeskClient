@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, responsiveFontSizes, makeStyles } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
@@ -15,6 +15,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const App = () => {
+  const [authed, setAuthed] = useState(localStorage.getItem('authed') === 'true');
   const theme = responsiveFontSizes(createMuiTheme({
     palette: {
       type: localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
@@ -28,13 +29,13 @@ const App = () => {
           <Navbar />
           <Switch>
             <Route path='/dashboard'>
-              <Dashboard />
+              { authed ? <Dashboard /> : <Redirect to='login' /> }
             </Route>
             <Route path='/signup'>
-              <SignUp />
+              { !authed ? <SignUp setAuthed={setAuthed} /> : <Redirect to='dashboard' /> }
             </Route>
             <Route path='/login'>
-              <Login />
+              { !authed ? <Login /> : <Redirect to='dashboard' /> }
             </Route>
             <Route exact path='/'>
               <Redirect to='dashboard' />
