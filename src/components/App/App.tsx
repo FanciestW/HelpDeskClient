@@ -27,7 +27,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <div className={classes.root} style={{backgroundColor: theme.palette.background.default}}>
         <Router>
-          <Navbar />
+          <Navbar setAuthed={setAuthed} />
           <Switch>
             <Route path='/dashboard'>
               { authed ? <Dashboard /> : <Redirect to='login' /> }
