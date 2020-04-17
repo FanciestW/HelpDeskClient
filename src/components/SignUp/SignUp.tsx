@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import Axios from 'axios';
 import {
   Button,
@@ -40,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp(props: any) {
+export default function SignUp(props: ISignUpProps) {
   const classes = useStyles();
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
@@ -230,6 +229,6 @@ export default function SignUp(props: any) {
   );
 }
 
-SignUp.propTypes = {
-  setAuthed: PropTypes.func.isRequired,
-};
+interface ISignUpProps {
+  setAuthed: Function,
+}
