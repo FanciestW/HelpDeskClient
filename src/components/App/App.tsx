@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Cookie from 'js-cookie';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, responsiveFontSizes, makeStyles } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
@@ -15,7 +14,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const App = () => {
+const App: React.FC = () => {
   const [authed, setAuthed] = useState(localStorage.getItem('authed') === 'true');
   const theme = responsiveFontSizes(createMuiTheme({
     palette: {
