@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Axios from 'axios';
 import {
   Button,
   Checkbox,
@@ -14,7 +15,7 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Avatar from '@material-ui/core/Avatar';
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
@@ -34,10 +35,22 @@ const useStyles = makeStyles((theme: any) => ({
   },
 }));
 
-export default function Login() {
+export default function Login(props: ILoginProps) {
   const classes = useStyles();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const loginData = { email, password };
+      const res = await Axios.post('/api/user/login', loginData);
+      localStorage.setItem('authed', (res.status === 200).toString());
+      props.setAuthed(res.status === 200);
+    } catch (err) {
+      console.error(err);
+      // TODO::Show error snackbar
+    }
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -81,11 +94,11 @@ export default function Login() {
             label="Remember me"
           />
           <Button
-            type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={handleLogin}
           >
             Sign In
           </Button>
@@ -106,3 +119,7 @@ export default function Login() {
     </Container>
   );
 }
+
+interface ILoginProps {
+  setAuthed: Function,
+};

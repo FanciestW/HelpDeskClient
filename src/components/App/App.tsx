@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Cookie from 'js-cookie';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, responsiveFontSizes, makeStyles } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
@@ -35,7 +36,7 @@ const App = () => {
               { !authed ? <SignUp setAuthed={setAuthed} /> : <Redirect to='dashboard' /> }
             </Route>
             <Route path='/login'>
-              { !authed ? <Login /> : <Redirect to='dashboard' /> }
+              { !authed ? <Login setAuthed={setAuthed} /> : <Redirect to='dashboard' /> }
             </Route>
             <Route exact path='/'>
               <Redirect to='dashboard' />
