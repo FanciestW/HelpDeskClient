@@ -1,13 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useQuery, gql } from '@apollo/client';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DashboardCard from '../DashboardCard/DashboardCard';
-
-const mockData = {
-  openCases: 2,
-  openTasks: 5,
-  numberOfClients: 12,
-};
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,10 +19,37 @@ const useStyles = makeStyles(() => ({
 
 const Dashboard = () => {
   const classes = useStyles();
-  const cardTitles = ['Open Cases', 'Upcoming Tasks', 'Clients'];
-  const cardData = [mockData.openCases, mockData.openTasks, mockData.numberOfClients];
+  const cardTitles = ['Open Tickets', 'Upcoming Tasks', 'Clients'];
   const cardButtonText = ['See Open Tickets', 'See Tasks', 'Clients List'];
   const cardButtonDestination = ['google.com', 'github.com', 'linkedin.com'];
+
+  useEffect(() => {
+  }, []);
+
+
+  const query = gql`
+    query {
+      getOpenTickets {
+        ticketId
+      }
+      getUpcomingTasks {
+        taskId
+      }
+    }
+  `;
+  const { loading, error, data } = useQuery(query);
+
+  const cardData = [
+    loading && !error ? 'N/A' : data?.getOpenTickets?.length?.toString(),
+    loading && !error ? 'N/A' : data?.getUpcomingTasks?.length?.toString(),
+    loading && !error ? 'N/A' : 12
+  ];
+  if (error) {
+    console.log(error);
+  }
+  if (!loading) {
+    console.log(data);
+  }
   return (
     <div className={classes.root}>
       <Grid container className={classes.root} spacing={2}>

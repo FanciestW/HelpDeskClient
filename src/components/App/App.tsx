@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ApolloProvider, ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, responsiveFontSizes, makeStyles } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
@@ -7,6 +8,13 @@ import Navbar from '../Navbar/Navbar';
 import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
 import Login from '../Login/Login';
+
+const GraphQLClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: '/api/graphql',
+  })
+});
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -27,23 +35,25 @@ const App: React.FC = () => {
       <div className={classes.root} style={{backgroundColor: theme.palette.background.default}}>
         <Router>
           <Navbar setAuthed={setAuthed} />
-          <Switch>
-            <Route path='/dashboard'>
-              { authed ? <Dashboard /> : <Redirect to='login' /> }
-            </Route>
-            <Route path='/signup'>
-              { !authed ? <SignUp setAuthed={setAuthed} /> : <Redirect to='dashboard' /> }
-            </Route>
-            <Route path='/login'>
-              { !authed ? <Login setAuthed={setAuthed} /> : <Redirect to='dashboard' /> }
-            </Route>
-            <Route exact path='/'>
-              <Redirect to='dashboard' />
-            </Route>
-            <Route path='/*'>
-              <NotFound />
-            </Route>
-          </Switch>
+          <ApolloProvider client={GraphQLClient} >
+            <Switch>
+              <Route path='/dashboard'>
+                { authed ? <Dashboard /> : <Redirect to='login' /> }
+              </Route>
+              <Route path='/signup'>
+                { !authed ? <SignUp setAuthed={setAuthed} /> : <Redirect to='dashboard' /> }
+              </Route>
+              <Route path='/login'>
+                { !authed ? <Login setAuthed={setAuthed} /> : <Redirect to='dashboard' /> }
+              </Route>
+              <Route exact path='/'>
+                <Redirect to='dashboard' />
+              </Route>
+              <Route path='/*'>
+                <NotFound />
+              </Route>
+            </Switch>
+          </ApolloProvider>
         </Router>
       </div>
     </ThemeProvider>
