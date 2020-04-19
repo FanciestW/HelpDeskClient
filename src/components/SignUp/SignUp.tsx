@@ -3,12 +3,14 @@ import Axios from 'axios';
 import {
   Button,
   Grid,
+  IconButton,
   TextField,
   Typography,
   FormLabel,
   FormControl,
   RadioGroup,
   Radio,
+  Snackbar,
   Container,
   CssBaseline,
   FormControlLabel,
@@ -16,6 +18,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import CloseIcon from '@material-ui/icons/Close';
 import Avatar from '@material-ui/core/Avatar';
 
 const useStyles = makeStyles((theme) => ({
@@ -50,6 +53,7 @@ export default function SignUp(props: ISignUpProps) {
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
   const [isTechnician, setIsTechnician] = useState('no');
+  const [errorSnackbarIsOpen, setErrorSnackbarIsOpen] = useState(false);
 
   const handleIsTechnician = (event: any) => {
     setIsTechnician(event.target.value);
@@ -73,7 +77,7 @@ export default function SignUp(props: ISignUpProps) {
       props.setAuthed(res.status === 200);
     } catch (err) {
       console.error(err);
-      // TODO::Show error snackbar
+      setErrorSnackbarIsOpen(true);
     }
   };
   
@@ -224,6 +228,24 @@ export default function SignUp(props: ISignUpProps) {
             </Grid>
           </Grid>
         </form>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          open={errorSnackbarIsOpen}
+          autoHideDuration={3000}
+          onClose={() => setErrorSnackbarIsOpen(false)}
+          message="Note archived"
+          action={
+            <React.Fragment>
+              Unable to login, please try again.
+              <IconButton size="small" aria-label="close" color="inherit" onClick={() => setErrorSnackbarIsOpen(false)}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </React.Fragment>
+          }
+        />
       </div>
     </Container>
   );

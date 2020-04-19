@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DashboardCard from '../DashboardCard/DashboardCard';
@@ -17,7 +17,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Dashboard = () => {
+const Dashboard = (props: IDashboardProps) => {
   const classes = useStyles();
   const cardTitles = ['Open Tickets', 'Upcoming Tasks', 'Clients'];
   const cardButtonText = ['See Open Tickets', 'See Tasks', 'Clients List'];
@@ -35,21 +35,25 @@ const Dashboard = () => {
       getUpcomingTasks {
         taskId
       }
+      getClients {
+        uid
+      }
     }
   `;
-  const { loading, error, data } = useQuery(query);
+  const { loading, error, data } = useQuery(query, {
+    onError: (error: ApolloError) => {
+      if ((error.networkError as ServerParseError).statusCode === 401) {
+        props.setAuthed(false);
+      }
+    }
+  });
 
   const cardData = [
     loading && !error ? 'N/A' : data?.getOpenTickets?.length?.toString(),
     loading && !error ? 'N/A' : data?.getUpcomingTasks?.length?.toString(),
-    loading && !error ? 'N/A' : 12
+    loading && !error ? 'N/A' : data?.getClients?.length.toString(),
   ];
-  if (error) {
-    console.log(error);
-  }
-  if (!loading) {
-    console.log(data);
-  }
+
   return (
     <div className={classes.root}>
       <Grid container className={classes.root} spacing={2}>
@@ -71,5 +75,9 @@ const Dashboard = () => {
     </div>
   );
 };
+
+interface IDashboardProps {
+  setAuthed: Function;
+}
 
 export default Dashboard;

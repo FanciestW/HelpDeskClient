@@ -5,14 +5,17 @@ import {
   Checkbox,
   Container,
   CssBaseline,
+  IconButton,
   FormControlLabel,
   Grid,
   Link,
+  Snackbar,
   TextField,
   Typography,
   makeStyles,
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import CloseIcon from '@material-ui/icons/Close';
 import Avatar from '@material-ui/core/Avatar';
 
 const useStyles = makeStyles((theme) => ({
@@ -39,6 +42,7 @@ export default function Login(props: ILoginProps) {
   const classes = useStyles();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorSnackbarIsOpen, setErrorSnackbarIsOpen] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -48,7 +52,7 @@ export default function Login(props: ILoginProps) {
       props.setAuthed(res.status === 200);
     } catch (err) {
       console.error(err);
-      // TODO::Show error snackbar
+      setErrorSnackbarIsOpen(true);
     }
   };
 
@@ -115,6 +119,24 @@ export default function Login(props: ILoginProps) {
             </Grid>
           </Grid>
         </form>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          open={errorSnackbarIsOpen}
+          autoHideDuration={3000}
+          onClose={() => setErrorSnackbarIsOpen(false)}
+          message="Note archived"
+          action={
+            <React.Fragment>
+              Unable to login, please try again.
+              <IconButton size="small" aria-label="close" color="inherit" onClick={() => setErrorSnackbarIsOpen(false)}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </React.Fragment>
+          }
+        />
       </div>
     </Container>
   );
@@ -122,4 +144,4 @@ export default function Login(props: ILoginProps) {
 
 interface ILoginProps {
   setAuthed: Function;
-};
+}

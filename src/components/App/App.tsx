@@ -9,13 +9,6 @@ import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
 import Login from '../Login/Login';
 
-const GraphQLClient = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: new HttpLink({
-    uri: '/api/graphql',
-  })
-});
-
 const useStyles = makeStyles(() => ({
   root: {
     height: '100vh',
@@ -23,37 +16,53 @@ const useStyles = makeStyles(() => ({
 }));
 
 const App: React.FC = () => {
+  // States
   const [authed, setAuthed] = useState(localStorage.getItem('authed') === 'true');
+
+  // Styling
   const theme = responsiveFontSizes(createMuiTheme({
     palette: {
       type: localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
     },
   }));
   const classes = useStyles(theme);
+
+  // GraphQL Client
+  const GraphQLClient = new ApolloClient({
+    cache: new InMemoryCache(),
+    link: new HttpLink({
+      uri: '/api/graphql',
+    })
+  });
+
   return (
     <ThemeProvider theme={theme}>
-      <div className={classes.root} style={{backgroundColor: theme.palette.background.default}}>
+      <div className={classes.root} style={{ backgroundColor: theme.palette.background.default }}>
         <Router>
           <Navbar setAuthed={setAuthed} />
-          <ApolloProvider client={GraphQLClient} >
-            <Switch>
-              <Route path='/dashboard'>
-                { authed ? <Dashboard /> : <Redirect to='login' /> }
-              </Route>
-              <Route path='/signup'>
-                { !authed ? <SignUp setAuthed={setAuthed} /> : <Redirect to='dashboard' /> }
-              </Route>
-              <Route path='/login'>
-                { !authed ? <Login setAuthed={setAuthed} /> : <Redirect to='dashboard' /> }
-              </Route>
-              <Route exact path='/'>
-                <Redirect to='dashboard' />
-              </Route>
-              <Route path='/*'>
-                <NotFound />
-              </Route>
-            </Switch>
-          </ApolloProvider>
+          <Switch>
+            <Route path='/dashboard'>
+              {
+                authed ?
+                  <ApolloProvider client={GraphQLClient} >
+                    <Dashboard setAuthed={setAuthed} />
+                  </ApolloProvider>
+                  : <Redirect to='login' />
+              }
+            </Route>
+            <Route path='/signup'>
+              {!authed ? <SignUp setAuthed={setAuthed} /> : <Redirect to='dashboard' />}
+            </Route>
+            <Route path='/login'>
+              {!authed ? <Login setAuthed={setAuthed} /> : <Redirect to='dashboard' />}
+            </Route>
+            <Route exact path='/'>
+              <Redirect to='dashboard' />
+            </Route>
+            <Route path='/*'>
+              <NotFound />
+            </Route>
+          </Switch>
         </Router>
       </div>
     </ThemeProvider>
