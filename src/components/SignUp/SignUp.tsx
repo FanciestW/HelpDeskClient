@@ -230,5 +230,5 @@ export default function SignUp(props: ISignUpProps) {
 }
 
 interface ISignUpProps {
-  setAuthed: Function,
+  setAuthed: Function;
 }

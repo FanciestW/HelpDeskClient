@@ -121,5 +121,5 @@ export default function Login(props: ILoginProps) {
 }
 
 interface ILoginProps {
-  setAuthed: Function,
+  setAuthed: Function;
 };
