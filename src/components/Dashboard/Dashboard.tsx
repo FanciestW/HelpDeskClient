@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import { Grid } from '@material-ui/core';
@@ -23,10 +23,6 @@ const Dashboard = (props: IDashboardProps) => {
   const cardTitles = ['Open Tickets', 'Upcoming Tasks', 'Clients'];
   const cardButtonText = ['See Open Tickets', 'See Tasks', 'Clients List'];
   const cardButtonDestination = ['/tickets', '/tasks', '/clients'];
-
-  useEffect(() => {
-  }, []);
-
 
   const query = gql`
     query {

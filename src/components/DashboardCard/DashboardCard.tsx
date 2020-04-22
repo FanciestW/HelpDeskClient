@@ -44,10 +44,10 @@ const DashboardCard = (props: DashboardCardProps) => {
 };
 
 interface DashboardCardProps {
-  title: string,
-  data: any,
-  buttonText?: string,
-  buttonDestination?: string,
+  title: string;
+  data: any;
+  buttonText?: string;
+  buttonDestination?: string;
 }
 
 export default DashboardCard;

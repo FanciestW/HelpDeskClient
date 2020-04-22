@@ -1,0 +1,4 @@
+/node_modules
+**/*.d.ts
+./src/setupTest.ts
+./src/serviceWorker.ts

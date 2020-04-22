@@ -149,5 +149,5 @@ export default function Navbar(props: INavbarProps) {
 }
 
 interface INavbarProps {
-  setAuthed: Function,
+  setAuthed: Function;
 }
