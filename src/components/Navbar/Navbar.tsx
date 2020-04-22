@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Axios from 'axios';
-import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  SwipeableDrawer,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Menu as MenuIcon,
   Brightness7 as Brightness7Icon,
   Brightness4 as Brightness4Icon,
   ExitToApp as ExitToAppIcon,
+  AccountCircle as AccountCircleIcon,
+  People as PeopleIcon,
+  Dashboard as DashboardIcon,
+  AssignmentLate as AssignmentLateIcon,
+  FormatListBulleted as TasksIcon,
 } from '@material-ui/icons';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,12 +40,20 @@ const useStyles = makeStyles(theme => ({
   },
   iconButton: {
     color: '#FFFFFF',
-  }
+  },
+  sideNav: {
+    width: '320px',
+  },
+  routerLink: {
+    color: 'inherit',
+    textDecoration: 'none',
+  },
 }));
 
 export default function Navbar(props: INavbarProps) {
   const classes = useStyles();
-  const history = useHistory();
+  
+  const [menuIsOpen, setmenuIsOpen] = useState(false);
 
   function toggleTheme() {
     const currentTheme = localStorage.getItem('theme');
@@ -48,17 +71,74 @@ export default function Navbar(props: INavbarProps) {
     props.setAuthed(false);
   }
 
+  const handleToggleMenu = () => {
+    menuIsOpen ? setmenuIsOpen(false) : setmenuIsOpen(true);
+  };
+
+  const sideNav = (
+    <div className={classes.sideNav}
+      role="presentation"
+      onClick={handleToggleMenu}
+      onKeyDown={handleToggleMenu}>
+      <List>
+        <Link to="/dashboard" className={classes.routerLink}>
+          <ListItem button>
+            <ListItemIcon className="drawer-icon">
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+        </Link>
+        <Link to="/tickets" className={classes.routerLink}>
+          <ListItem button>
+            <ListItemIcon className="drawer-icon">
+              <AssignmentLateIcon />
+            </ListItemIcon>
+            <ListItemText primary="Tickets" />
+          </ListItem>
+        </Link>
+        <Link to="/tasks" className={classes.routerLink}>
+          <ListItem button>
+            <ListItemIcon className="drawer-icon">
+              <TasksIcon />
+            </ListItemIcon>
+            <ListItemText primary="Tasks List" />
+          </ListItem>
+        </Link>
+        <Link to="/tasks" className={classes.routerLink}>
+          <ListItem button>
+            <ListItemIcon className="drawer-icon">
+              <PeopleIcon />
+            </ListItemIcon>
+            <ListItemText primary="Clients" />
+          </ListItem>
+        </Link>
+        <Link to="/profile" className={classes.routerLink}>
+          <ListItem button>
+            <ListItemIcon className="drawer-icon">
+              <AccountCircleIcon />
+            </ListItemIcon>
+            <ListItemText primary="My Profile" />
+          </ListItem>
+        </Link>
+      </List>
+    </div>
+  );
+
   return (
     <AppBar position='static'>
       <Toolbar>
-        <IconButton edge='start' className={classes.menuButton} color='inherit' aria-label='menu'>
+        <IconButton edge='start' className={classes.menuButton} onClick={handleToggleMenu} color='inherit' aria-label='menu'>
           <MenuIcon />
         </IconButton>
-        <Typography variant='h6' className={classes.title} onClick={() => history.push('/dashboard')}>
-          HelpDesk
+        <SwipeableDrawer open={menuIsOpen} onOpen={handleToggleMenu} onClose={handleToggleMenu} className={'side-drawer'}>
+          {sideNav}
+        </SwipeableDrawer>
+        <Typography variant='h6' className={classes.title}>
+          <Link to='/dashboard' className={classes.routerLink}>HelpDesk</Link>
         </Typography>
         <IconButton edge='start' className={classes.iconButton} onClick={toggleTheme}>
-          { localStorage.getItem('theme') === 'dark' ? <Brightness7Icon /> : <Brightness4Icon /> }
+          {localStorage.getItem('theme') === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
         </IconButton>
         <IconButton edge='start' className={classes.iconButton} onClick={handleLogout}>
           <ExitToAppIcon />
