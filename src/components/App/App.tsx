@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ApolloProvider, ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 import { ThemeProvider } from '@material-ui/styles';
-import { Button, makeStyles, responsiveFontSizes, createMuiTheme } from '@material-ui/core';
+import { makeStyles, responsiveFontSizes, createMuiTheme } from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { IRootReducer } from '../../redux/IRootReducer';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
@@ -46,9 +46,6 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root} style={{ backgroundColor: theme.palette.background.default }}>
-        <Button onClick={() => console.log(isAuthed)}>Tell me if Authed</Button>
-        <Button onClick={() => dispatch(changeAuthed(true))}>Set isAuth true</Button>
-        <Button onClick={() => dispatch(changeAuthed(false))}>Set isAuth false</Button>
         <Router>
           <Navbar setAuthed={setAuthed} />
           <Switch>
