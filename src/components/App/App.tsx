@@ -52,15 +52,15 @@ const App: React.FC = () => {
         <Router>
           <Navbar setAuthed={setAuthed} />
           <Switch>
-            <Route path='/dashboard'>
-              {
-                isAuthed ?
+            {
+              isAuthed ?
+                <Route>
                   <ApolloProvider client={GraphQLClient} >
                     <Dashboard />
                   </ApolloProvider>
-                  : <Redirect to='login' />
-              }
-            </Route>
+                </Route>
+                : <Redirect to='login' />
+            }
             <Route path='/signup'>
               {!isAuthed ? <SignUp /> : <Redirect to='dashboard' />}
             </Route>
