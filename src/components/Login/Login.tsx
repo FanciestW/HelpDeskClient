@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Axios from 'axios';
 import {
   Button,
@@ -17,6 +18,7 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import Avatar from '@material-ui/core/Avatar';
+import { changeAuthed } from '../../redux/actions/AuthedActions';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -38,7 +40,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login(props: ILoginProps) {
+export default function Login() {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -49,7 +52,7 @@ export default function Login(props: ILoginProps) {
       const loginData = { email, password };
       const res = await Axios.post('/api/user/login', loginData);
       localStorage.setItem('authed', (res.status === 200).toString());
-      props.setAuthed(res.status === 200);
+      dispatch(changeAuthed(res.status === 200));
     } catch (err) {
       console.error(err);
       setErrorSnackbarIsOpen(true);
@@ -140,8 +143,4 @@ export default function Login(props: ILoginProps) {
       </div>
     </Container>
   );
-}
-
-interface ILoginProps {
-  setAuthed: Function;
 }

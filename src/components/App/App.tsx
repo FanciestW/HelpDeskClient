@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ApolloProvider, ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 import { ThemeProvider } from '@material-ui/styles';
-import { createMuiTheme, responsiveFontSizes, makeStyles } from '@material-ui/core/styles';
+import { Button, makeStyles, responsiveFontSizes, createMuiTheme } from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { IRootReducer } from '../../redux/IRootReducer';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
@@ -23,6 +23,7 @@ const App: React.FC = () => {
   const isAuthed: boolean = useSelector<IRootReducer, boolean>(state => state.authedReducer.isAuthed);
 
   const setAuthed = (newAuth: boolean) => {
+    console.log(`Setting isAuthed to: ${newAuth}`);
     dispatch(changeAuthed(newAuth));
   };
 
@@ -45,6 +46,9 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root} style={{ backgroundColor: theme.palette.background.default }}>
+        <Button onClick={() => console.log(isAuthed)}>Tell me if Authed</Button>
+        <Button onClick={() => dispatch(changeAuthed(true))}>Set isAuth true</Button>
+        <Button onClick={() => dispatch(changeAuthed(false))}>Set isAuth false</Button>
         <Router>
           <Navbar setAuthed={setAuthed} />
           <Switch>
@@ -52,16 +56,16 @@ const App: React.FC = () => {
               {
                 isAuthed ?
                   <ApolloProvider client={GraphQLClient} >
-                    <Dashboard setAuthed={setAuthed} />
+                    <Dashboard />
                   </ApolloProvider>
                   : <Redirect to='login' />
               }
             </Route>
             <Route path='/signup'>
-              {!isAuthed ? <SignUp setAuthed={setAuthed} /> : <Redirect to='dashboard' />}
+              {!isAuthed ? <SignUp /> : <Redirect to='dashboard' />}
             </Route>
             <Route path='/login'>
-              {!isAuthed ? <Login setAuthed={setAuthed} /> : <Redirect to='dashboard' />}
+              {!isAuthed ? <Login /> : <Redirect to='dashboard' />}
             </Route>
             <Route exact path='/'>
               <Redirect to='dashboard' />

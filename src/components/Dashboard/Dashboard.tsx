@@ -1,9 +1,11 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 // eslint-disable-next-line no-unused-vars
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DashboardCard from '../DashboardCard/DashboardCard';
+import { changeAuthed } from '../../redux/actions/AuthedActions';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -18,7 +20,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Dashboard = (props: IDashboardProps) => {
+const Dashboard = () => {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const cardTitles = ['Open Tickets', 'Upcoming Tasks', 'Clients'];
   const cardButtonText = ['See Open Tickets', 'See Tasks', 'Clients List'];
@@ -40,7 +43,7 @@ const Dashboard = (props: IDashboardProps) => {
   const { loading, error, data } = useQuery(query, {
     onError: (error: ApolloError) => {
       if ((error.networkError as ServerParseError).statusCode === 401) {
-        props.setAuthed(false);
+        dispatch(changeAuthed(false));
       }
     }
   });
@@ -72,9 +75,5 @@ const Dashboard = (props: IDashboardProps) => {
     </div>
   );
 };
-
-interface IDashboardProps {
-  setAuthed: Function;
-}
 
 export default Dashboard;

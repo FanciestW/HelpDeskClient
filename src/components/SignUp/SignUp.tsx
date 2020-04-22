@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Axios from 'axios';
 import {
   Button,
@@ -20,6 +21,7 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import Avatar from '@material-ui/core/Avatar';
+import { changeAuthed } from '../../redux/actions/AuthedActions';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,7 +44,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp(props: ISignUpProps) {
+export default function SignUp() {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
@@ -74,7 +77,7 @@ export default function SignUp(props: ISignUpProps) {
       };
       const res = await Axios.post('/api/user/signup', signUpData);
       localStorage.setItem('authed', (res.status === 200).toString());
-      props.setAuthed(res.status === 200);
+      dispatch(changeAuthed(res.status === 200));
     } catch (err) {
       console.error(err);
       setErrorSnackbarIsOpen(true);
@@ -249,8 +252,4 @@ export default function SignUp(props: ISignUpProps) {
       </div>
     </Container>
   );
-}
-
-interface ISignUpProps {
-  setAuthed: Function;
 }
