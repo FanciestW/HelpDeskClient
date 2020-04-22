@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { ApolloProvider, ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, responsiveFontSizes, makeStyles } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { IRootReducer } from '../../redux/IRootReducer';
+import { changeAuthed } from '../../redux/actions/AuthedActions';
 import Dashboard from '../Dashboard/Dashboard';
 import Navbar from '../Navbar/Navbar';
 import NotFound from '../NotFound/NotFound';
@@ -16,8 +19,12 @@ const useStyles = makeStyles(() => ({
 }));
 
 const App: React.FC = () => {
-  // States
-  const [authed, setAuthed] = useState(localStorage.getItem('authed') === 'true');
+  const dispatch = useDispatch();
+  const isAuthed: boolean = useSelector<IRootReducer, boolean>(state => state.authedReducer.isAuthed);
+
+  const setAuthed = (newAuth: boolean) => {
+    dispatch(changeAuthed(newAuth));
+  };
 
   // Styling
   const theme = responsiveFontSizes(createMuiTheme({
@@ -43,7 +50,7 @@ const App: React.FC = () => {
           <Switch>
             <Route path='/dashboard'>
               {
-                authed ?
+                isAuthed ?
                   <ApolloProvider client={GraphQLClient} >
                     <Dashboard setAuthed={setAuthed} />
                   </ApolloProvider>
@@ -51,10 +58,10 @@ const App: React.FC = () => {
               }
             </Route>
             <Route path='/signup'>
-              {!authed ? <SignUp setAuthed={setAuthed} /> : <Redirect to='dashboard' />}
+              {!isAuthed ? <SignUp setAuthed={setAuthed} /> : <Redirect to='dashboard' />}
             </Route>
             <Route path='/login'>
-              {!authed ? <Login setAuthed={setAuthed} /> : <Redirect to='dashboard' />}
+              {!isAuthed ? <Login setAuthed={setAuthed} /> : <Redirect to='dashboard' />}
             </Route>
             <Route exact path='/'>
               <Redirect to='dashboard' />

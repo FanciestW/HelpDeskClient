@@ -1,3 +1,3 @@
 export interface IAuthedState {
-  isAuthed?: boolean;
+  isAuthed: boolean;
 }
