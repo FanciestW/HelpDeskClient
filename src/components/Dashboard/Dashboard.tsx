@@ -22,7 +22,7 @@ const Dashboard = (props: IDashboardProps) => {
   const classes = useStyles();
   const cardTitles = ['Open Tickets', 'Upcoming Tasks', 'Clients'];
   const cardButtonText = ['See Open Tickets', 'See Tasks', 'Clients List'];
-  const cardButtonDestination = ['google.com', 'github.com', 'linkedin.com'];
+  const cardButtonDestination = ['/tickets', '/tasks', '/clients'];
 
   useEffect(() => {
   }, []);
@@ -64,9 +64,9 @@ const Dashboard = (props: IDashboardProps) => {
               return (
                 <Grid key={index} item>
                   <DashboardCard title={title}
-                    data={cardData[index] || null}
-                    buttonText={cardButtonText[index] || null}
-                    buttonDestination={cardButtonDestination[index] || null} />
+                    data={cardData[index]}
+                    buttonText={cardButtonText[index]}
+                    buttonDestination={cardButtonDestination[index]} />
                 </Grid>
               );
             })}
