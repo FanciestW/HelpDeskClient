@@ -54,7 +54,7 @@ const App: React.FC = () => {
               <Route path='/dashboard'>
                 {isAuthed ? <Dashboard /> : <Redirect to='login' />}
               </Route>
-              <Route path='/ticket'>
+              <Route path='/tickets'>
                 {isAuthed ? <TicketView /> : <Redirect to='login' />}
               </Route>
               <Route path='/login'>
