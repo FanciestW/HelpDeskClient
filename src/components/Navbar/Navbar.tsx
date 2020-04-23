@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import Axios from 'axios';
 import {
   AppBar,
@@ -25,6 +24,8 @@ import {
   FormatListBulleted as TasksIcon,
 } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { changeAuthed } from '../../redux/actions/AuthedActions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,8 +53,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Navbar() {
-  const history = useHistory();
   const classes = useStyles();
+  const dispatch = useDispatch();
   
   const [menuIsOpen, setmenuIsOpen] = useState(false);
 
@@ -70,8 +71,7 @@ export default function Navbar() {
   async function handleLogout() {
     await Axios.post('/api/user/logout');
     localStorage.setItem('authed', 'false');
-    // props.setAuthed(false);
-    history.push('/login');
+    dispatch(changeAuthed(false));
   }
 
   const handleToggleMenu = () => {

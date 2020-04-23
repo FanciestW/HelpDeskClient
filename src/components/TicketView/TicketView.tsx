@@ -55,6 +55,7 @@ export default function TicketView() {
     },
     onError: (error: ApolloError) => {
       if ((error.networkError as ServerParseError).statusCode === 401) {
+        localStorage.setItem('authed', 'false');
         dispatch(changeAuthed(false));
       }
     },
