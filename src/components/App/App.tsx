@@ -70,33 +70,6 @@ const App: React.FC = () => {
             </Switch>
           </ApolloProvider>
         </Router>
-        {/* {
-          isAuthed ? 
-            <Router>
-              <ApolloProvider client={GraphQLClient}>
-                <Navbar setAuthed={setAuthed} />
-                <Switch>
-                  <Route path='/dashboard' component={Dashboard} />
-                  <Route path='/tickets' component={TicketView} />
-                  <Route exact path='/'>
-                    <Redirect to='dashboard' />
-                  </Route>
-                  <Route path='/*' component={NotFound} />
-                </Switch>
-              </ApolloProvider>
-            </Router>
-            :
-            <Router>
-              <Switch>
-                <Route path='/login' component={Login} />
-                <Route path='/signup' component={SignUp} />
-                <Route exact path='/'>
-                  <Redirect to='login' />
-                </Route>
-                <Route path='/*' component={NotFound} />
-              </Switch>
-            </Router>
-        } */}
       </div>
     </ThemeProvider>
   );
