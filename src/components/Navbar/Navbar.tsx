@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import Axios from 'axios';
 import {
   AppBar,
@@ -51,6 +52,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Navbar(props: INavbarProps) {
+  const history = useHistory();
   const classes = useStyles();
   
   const [menuIsOpen, setmenuIsOpen] = useState(false);
@@ -69,6 +71,7 @@ export default function Navbar(props: INavbarProps) {
     await Axios.post('/api/user/logout');
     localStorage.setItem('authed', 'false');
     props.setAuthed(false);
+    history.push('/login');
   }
 
   const handleToggleMenu = () => {

@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import { IRootReducer } from '../../redux/IRootReducer';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 import Dashboard from '../Dashboard/Dashboard';
+import TicketView from '../TicketView/TicketView';
 import Navbar from '../Navbar/Navbar';
 import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
@@ -46,32 +47,33 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root} style={{ backgroundColor: theme.palette.background.default }}>
-        <Router>
-          <Navbar setAuthed={setAuthed} />
-          <Switch>
-            {
-              isAuthed ?
-                <Route>
-                  <ApolloProvider client={GraphQLClient} >
-                    <Dashboard />
-                  </ApolloProvider>
+        {
+          isAuthed ? 
+            <Router>
+              <ApolloProvider client={GraphQLClient}>
+                <Navbar setAuthed={setAuthed} />
+                <Switch>
+                  <Route path='/dashboard' component={Dashboard} />
+                  <Route path='/tickets' component={TicketView} />
+                  <Route exact path='/'>
+                    <Redirect to='dashboard' />
+                  </Route>
+                  <Route path='/*' component={NotFound} />
+                </Switch>
+              </ApolloProvider>
+            </Router>
+            :
+            <Router>
+              <Switch>
+                <Route path='/login' component={Login} />
+                <Route path='/signup' component={SignUp} />
+                <Route exact path='/'>
+                  <Redirect to='login' />
                 </Route>
-                : <Redirect to='login' />
-            }
-            <Route path='/signup'>
-              {!isAuthed ? <SignUp /> : <Redirect to='dashboard' />}
-            </Route>
-            <Route path='/login'>
-              {!isAuthed ? <Login /> : <Redirect to='dashboard' />}
-            </Route>
-            <Route exact path='/'>
-              <Redirect to='dashboard' />
-            </Route>
-            <Route path='/*'>
-              <NotFound />
-            </Route>
-          </Switch>
-        </Router>
+                <Route path='/*' component={NotFound} />
+              </Switch>
+            </Router>
+        }
       </div>
     </ThemeProvider>
   );
