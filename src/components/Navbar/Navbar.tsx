@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Navbar(props: INavbarProps) {
+export default function Navbar() {
   const history = useHistory();
   const classes = useStyles();
   
@@ -70,7 +70,7 @@ export default function Navbar(props: INavbarProps) {
   async function handleLogout() {
     await Axios.post('/api/user/logout');
     localStorage.setItem('authed', 'false');
-    props.setAuthed(false);
+    // props.setAuthed(false);
     history.push('/login');
   }
 
@@ -149,8 +149,4 @@ export default function Navbar(props: INavbarProps) {
       </Toolbar>
     </AppBar>
   );
-}
-
-interface INavbarProps {
-  setAuthed: Function;
 }
