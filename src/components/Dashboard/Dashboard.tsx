@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 // eslint-disable-next-line no-unused-vars
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
@@ -23,9 +23,7 @@ const useStyles = makeStyles(() => ({
 const Dashboard = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const cardTitles = ['Open Tickets', 'Upcoming Tasks', 'Clients'];
-  const cardButtonText = ['See Open Tickets', 'See Tasks', 'Clients List'];
-  const cardButtonDestination = ['/tickets', '/tasks', '/clients'];
+  const [cardData, setCardData] = useState(['N/A', 'N/A', 'N/A']);
 
   const query = gql`
     query {
@@ -40,19 +38,25 @@ const Dashboard = () => {
       }
     }
   `;
-  const { loading, error, data } = useQuery(query, {
+  useQuery(query, {
+    onCompleted: (data) => {
+      setCardData([
+        data?.getOpenTickets?.length?.toString() || 'N/A',
+        data?.getUpcomingTasks?.length?.toString() || 'N/A',
+        data?.getClients?.length?.toString() || 'N/A',
+      ]);
+    },
     onError: (error: ApolloError) => {
       if ((error.networkError as ServerParseError).statusCode === 401) {
         dispatch(changeAuthed(false));
       }
-    }
+    },
   });
 
-  const cardData = [
-    loading && !error ? 'N/A' : data?.getOpenTickets?.length?.toString(),
-    loading && !error ? 'N/A' : data?.getUpcomingTasks?.length?.toString(),
-    loading && !error ? 'N/A' : data?.getClients?.length.toString(),
-  ];
+  // Static UI Component Text for Dashboard Card Components.
+  const cardTitles = ['Open Tickets', 'Upcoming Tasks', 'Clients'];
+  const cardButtonText = ['See Open Tickets', 'See Tasks', 'Clients List'];
+  const cardButtonDestination = ['/tickets', '/tasks', '/clients'];
 
   return (
     <div className={classes.root}>

@@ -31,14 +31,14 @@ export default function TicketView() {
   `;
   const [ticketsData, setTicketsData] = React.useState([]);
   useQuery(query, {
+    onCompleted: (data) => {
+      setTicketsData(data.getTickets);
+    },
     onError: (error: ApolloError) => {
       if ((error.networkError as ServerParseError).statusCode === 401) {
         dispatch(changeAuthed(false));
       }
     },
-    onCompleted: (data) => {
-      setTicketsData(data.getTickets);
-    }
   });
 
   return (
