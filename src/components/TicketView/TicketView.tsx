@@ -60,7 +60,64 @@ export default function TicketView() {
     },
   });
 
-  const columns = ['Title', 'Description', 'Created By', 'Assigned To', 'Status', 'Priority', 'DueDate'];
+  const columns = [
+    {
+      name: 'title',
+      label: 'Title',
+      options: {
+        filter: false,
+        sort: false,
+      }
+    },
+    {
+      name: 'description',
+      label: 'Description',
+      options: {
+        filter: false,
+        sort: false,
+      }
+    },
+    {
+      name: 'createdBy',
+      label: 'Created By',
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: 'assignedTo',
+      label: 'Assigned To',
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: 'priority',
+      label: 'Priority',
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: 'dueDate',
+      label: 'Due Date',
+      options: {
+        filter: false,
+        sort: true
+      }
+    }
+  ];
 
   return (
     <div>
@@ -68,7 +125,11 @@ export default function TicketView() {
         title='All Tickets'
         data={ticketsData}
         columns={columns}
-        options={{ filterType: 'checkbox' }}
+        options={{
+          filterType: 'multiselect',
+          print: false,
+          download: false,
+        }}
       />
     </div>
   );
