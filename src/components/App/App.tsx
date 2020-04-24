@@ -5,7 +5,6 @@ import { ThemeProvider } from '@material-ui/styles';
 import { makeStyles, responsiveFontSizes, createMuiTheme } from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { IRootReducer } from '../../redux/IRootReducer';
-import { changeAuthed } from '../../redux/actions/AuthedActions';
 import Dashboard from '../Dashboard/Dashboard';
 import TicketView from '../TicketView/TicketView';
 import Navbar from '../Navbar/Navbar';
@@ -22,11 +21,6 @@ const useStyles = makeStyles(() => ({
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const isAuthed: boolean = useSelector<IRootReducer, boolean>(state => state.authedReducer.isAuthed);
-
-  const setAuthed = (newAuth: boolean) => {
-    console.log(`Setting isAuthed to: ${newAuth}`);
-    dispatch(changeAuthed(newAuth));
-  };
 
   // Styling
   const theme = responsiveFontSizes(createMuiTheme({
