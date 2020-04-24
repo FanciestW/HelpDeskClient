@@ -1,12 +1,27 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import MUIDataTable from 'mui-datatables';
+import { Fab, makeStyles } from '@material-ui/core';
+import { Add as AddIcon } from '@material-ui/icons';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 import ITicket from '../../interfaces/Ticket';
 
+const useStyles = makeStyles((theme) => ({
+  addFab: {
+    margin: theme.spacing(1),
+    top: 'auto',
+    right: 20,
+    bottom: 20,
+    left: 'auto',
+    position: 'absolute',
+  }
+}));
+
 export default function TicketView() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const query = gql`
     query {
       getTickets {
@@ -31,9 +46,10 @@ export default function TicketView() {
       }
     }
   `;
+  const classes = useStyles();
   const [ticketsData, setTicketsData] = useState([['']]);
   useQuery(query, {
-    onCompleted: (data: { getTickets: ITicket[]}) => {
+    onCompleted: (data: { getTickets: ITicket[] }) => {
       const formattedData = data?.getTickets?.map((tix: ITicket): string[] => {
         let ticketDueDate = 'No Date';
         try {
@@ -45,7 +61,7 @@ export default function TicketView() {
           tix.title ? `${tix.title?.substring(0, 40)}${tix.title.length > 40 ? '...' : ''}` : '',
           tix.description ? `${tix.description?.substring(0, 80)}${tix.description.length > 80 ? '...' : ''}` : '',
           tix.createdBy ? `${tix.createdBy?.firstName} ${tix.createdBy?.lastName}` : 'N/A',
-          tix.assignedTo ? `${tix.assignedTo?.firstName} ${tix.assignedTo?.lastName}`: 'Unassigned',
+          tix.assignedTo ? `${tix.assignedTo?.firstName} ${tix.assignedTo?.lastName}` : 'Unassigned',
           tix.status || 'N/A',
           tix.priority?.toString() || 'N/A',
           ticketDueDate,
@@ -132,6 +148,12 @@ export default function TicketView() {
           download: false,
         }}
       />
+      <Fab className={classes.addFab}
+        aria-label='add'
+        color='primary'
+        onClick={() => history.push('/ticket/new')}>
+        <AddIcon />
+      </Fab>
     </div>
   );
 }
