@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TicketView() {
+  const [ticketsData, setTicketsData] = useState([['']]);
   const dispatch = useDispatch();
   const history = useHistory();
   const query = gql`
@@ -47,7 +48,6 @@ export default function TicketView() {
     }
   `;
   const classes = useStyles();
-  const [ticketsData, setTicketsData] = useState([['']]);
   useQuery(query, {
     onCompleted: (data: { getTickets: ITicket[] }) => {
       const formattedData = data?.getTickets?.map((tix: ITicket): string[] => {

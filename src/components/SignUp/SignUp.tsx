@@ -14,7 +14,6 @@ import {
   Radio,
   Snackbar,
   Container,
-  CssBaseline,
   FormControlLabel,
   Link,
   makeStyles,
@@ -91,7 +90,6 @@ export default function SignUp() {
   
   return (
     <Container component='main' maxWidth='md'>
-      <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
