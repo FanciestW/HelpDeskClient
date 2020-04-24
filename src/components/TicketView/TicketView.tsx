@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import MUIDataTable from 'mui-datatables';
-import { Fab, makeStyles } from '@material-ui/core';
+import { Fab, Tooltip, makeStyles } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 import ITicket from '../../interfaces/Ticket';
@@ -148,12 +148,14 @@ export default function TicketView() {
           download: false,
         }}
       />
-      <Fab className={classes.addFab}
-        aria-label='add'
-        color='primary'
-        onClick={() => history.push('/ticket/new')}>
-        <AddIcon />
-      </Fab>
+      <Tooltip title='New Ticket'>
+        <Fab className={classes.addFab}
+          aria-label='add'
+          color='primary'
+          onClick={() => history.push('/ticket/new')}>
+          <AddIcon />
+        </Fab>
+      </Tooltip>
     </div>
   );
 }
