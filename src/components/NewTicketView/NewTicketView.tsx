@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Button,
   Grid,
   Typography,
   InputLabel,
@@ -13,7 +14,7 @@ import {
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { useDispatch } from 'react-redux';
-import { useMutation, gql, ApolloError, ServerParseError } from '@apollo/client';
+import { useQuery, useMutation, gql, ApolloError, ServerParseError } from '@apollo/client';
 import ITicket from '../../interfaces/Ticket';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 
@@ -27,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: 'auto',
       marginRight: 'auto',
     },
+  },
+  title: {
+    textAlign: 'center',
   },
   paper: {
     marginTop: theme.spacing(3),
@@ -52,13 +56,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NewTicketView() {
   const [newTicketRes] = useState({});
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
+  const [status, setStatus] = useState('');
+  const [priority, setPriority] = useState('');
+  const [dueDate, setDueDate] = useState(null);
+
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
 
-  const handleDateChange = (date: any) => {
-    setSelectedDate(date);
-  };
   const newTicketMutation = gql`
     mutation NewTicket(
       $title: String!,
@@ -96,7 +103,7 @@ export default function NewTicketView() {
     <React.Fragment>
       <div className={classes.layout}>
         <Paper className={classes.paper}>
-          <Typography variant='h6' gutterBottom>
+          <Typography className={classes.title} variant='h4' gutterBottom>
             New Ticket Details
           </Typography>
           <Grid container spacing={3}>
@@ -120,15 +127,6 @@ export default function NewTicketView() {
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant='outlined'
-                id='assignedTo'
-                name='assignedTo'
-                label='Assigned To'
-                fullWidth
-              />
-            </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant='outlined'>
                 <InputLabel id='status-label'>Status</InputLabel>
@@ -137,6 +135,7 @@ export default function NewTicketView() {
                   name='status'
                   labelId='status-label'
                   label='Status'
+                  defaultValue='new'
                   fullWidth
                 >
                   {
@@ -173,19 +172,30 @@ export default function NewTicketView() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant='outlined'
+                id='assignedTo'
+                name='assignedTo'
+                label='Assigned To'
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   fullWidth
                   disableToolbar
+                  disablePast
+                  emptyLabel='No Due Date'
                   variant='inline'
                   inputVariant='outlined'
                   format='MM/dd/yyyy'
-                  margin='normal'
+                  margin='none'
                   id='date-picker-inline'
                   label='Due Date'
-                  value={selectedDate}
-                  onChange={handleDateChange}
+                  value={dueDate}
+                  onChange={(date: any) => setDueDate(date)}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
                   }}
@@ -193,6 +203,15 @@ export default function NewTicketView() {
               </MuiPickersUtilsProvider>
             </Grid>
           </Grid>
+          <div className={classes.buttons}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+            >
+              Save
+            </Button>
+          </div>
         </Paper>
       </div>
     </React.Fragment>
