@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import Axios from 'axios';
 import {
   Button,
@@ -13,7 +14,6 @@ import {
   Radio,
   Snackbar,
   Container,
-  CssBaseline,
   FormControlLabel,
   Link,
   makeStyles,
@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const classes = useStyles();
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
@@ -78,6 +79,9 @@ export default function SignUp() {
       const res = await Axios.post('/api/user/signup', signUpData);
       localStorage.setItem('authed', (res.status === 200).toString());
       dispatch(changeAuthed(res.status === 200));
+      if (res.status === 200) {
+        history.push('/dashboard');
+      }
     } catch (err) {
       console.error(err);
       setErrorSnackbarIsOpen(true);
@@ -86,7 +90,6 @@ export default function SignUp() {
   
   return (
     <Container component='main' maxWidth='md'>
-      <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />

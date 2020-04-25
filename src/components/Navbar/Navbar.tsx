@@ -10,6 +10,7 @@ import {
   ListItemText,
   SwipeableDrawer,
   Typography,
+  Tooltip,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -24,6 +25,8 @@ import {
   FormatListBulleted as TasksIcon,
 } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { changeAuthed } from '../../redux/actions/AuthedActions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,6 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
   iconButton: {
     color: '#FFFFFF',
+    margin: theme.spacing(0.5),
   },
   sideNav: {
     width: '320px',
@@ -50,10 +54,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Navbar(props: INavbarProps) {
+export default function Navbar() {
   const classes = useStyles();
-  
+  const dispatch = useDispatch();
+
   const [menuIsOpen, setmenuIsOpen] = useState(false);
+  const [theme] = useState(localStorage.getItem('theme') || 'light');
 
   function toggleTheme() {
     const currentTheme = localStorage.getItem('theme');
@@ -68,7 +74,7 @@ export default function Navbar(props: INavbarProps) {
   async function handleLogout() {
     await Axios.post('/api/user/logout');
     localStorage.setItem('authed', 'false');
-    props.setAuthed(false);
+    dispatch(changeAuthed(false));
   }
 
   const handleToggleMenu = () => {
@@ -128,26 +134,30 @@ export default function Navbar(props: INavbarProps) {
   return (
     <AppBar position='static'>
       <Toolbar>
-        <IconButton edge='start' className={classes.menuButton} onClick={handleToggleMenu} color='inherit' aria-label='menu'>
-          <MenuIcon />
-        </IconButton>
+        <Tooltip title='Menu'>
+          <IconButton edge='start' className={classes.menuButton} onClick={handleToggleMenu} color='inherit' aria-label='menu'>
+            <MenuIcon />
+          </IconButton>
+        </Tooltip>
         <SwipeableDrawer open={menuIsOpen} onOpen={handleToggleMenu} onClose={handleToggleMenu} className={'side-drawer'}>
           {sideNav}
         </SwipeableDrawer>
         <Typography variant='h6' className={classes.title}>
-          <Link to='/dashboard' className={classes.routerLink}>HelpDesk</Link>
+          <Tooltip title='Go to Dashboard' placement='bottom-start'>
+            <Link to='/dashboard' className={classes.routerLink}>HelpDesk</Link>
+          </Tooltip>
         </Typography>
-        <IconButton edge='start' className={classes.iconButton} onClick={toggleTheme}>
-          {localStorage.getItem('theme') === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-        </IconButton>
-        <IconButton edge='start' className={classes.iconButton} onClick={handleLogout}>
-          <ExitToAppIcon />
-        </IconButton>
+        <Tooltip title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}>
+          <IconButton edge='start' className={classes.iconButton} onClick={toggleTheme}>
+            {theme === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
+        </Tooltip>
+        <Tooltip title='Log Out'>
+          <IconButton edge='start' className={classes.iconButton} onClick={handleLogout}>
+            <ExitToAppIcon />
+          </IconButton>
+        </Tooltip>
       </Toolbar>
     </AppBar>
   );
-}
-
-interface INavbarProps {
-  setAuthed: Function;
 }
