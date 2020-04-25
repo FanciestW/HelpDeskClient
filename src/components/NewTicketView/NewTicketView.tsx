@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Button,
+  CircularProgress,
   Grid,
   Typography,
   InputLabel,
@@ -11,11 +12,14 @@ import {
   Paper,
   makeStyles,
 } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
+import { Autocomplete } from '@material-ui/lab';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { useDispatch } from 'react-redux';
 import { useQuery, useMutation, gql, ApolloError, ServerParseError } from '@apollo/client';
 import ITicket from '../../interfaces/Ticket';
+import IUser from '../../interfaces/User';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 
 const useStyles = makeStyles((theme) => ({
@@ -50,21 +54,49 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
+  progress: {
+    color: '#FFFFFF',
+  }
 }));
 
 //TODO::Add states and mutation call.
 
 export default function NewTicketView() {
-  const [newTicketRes] = useState({});
+  const [newTicketRes] = useState<ITicket | undefined>(undefined);
+  const [techniciansList, setTechniciansList] = useState<IUser[] | []>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [status, setStatus] = useState('');
   const [priority, setPriority] = useState('');
-  const [dueDate, setDueDate] = useState(null);
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
 
   const classes = useStyles();
+  const history = useHistory();
   const dispatch = useDispatch();
+
+  const technicianListQuery = gql`
+    query {
+      getTechnicians {
+        uid
+        firstName
+        lastName
+        email
+      }
+    }
+  `;
+
+  const { loading: loadingTechniciansList } = useQuery(technicianListQuery, {
+    onCompleted: (data: { getTechnicians: IUser[] }) => {
+      setTechniciansList(data.getTechnicians);
+    },
+    onError: (error: ApolloError) => {
+      if ((error.networkError as ServerParseError).statusCode === 401) {
+        localStorage.setItem('authed', 'false');
+        dispatch(changeAuthed(false));
+      }
+    }
+  });
 
   const newTicketMutation = gql`
     mutation NewTicket(
@@ -87,7 +119,10 @@ export default function NewTicketView() {
       }
     }
   `;
-  useMutation(newTicketMutation, {
+  const [addNewTicket, { loading: addTicketLoading }] = useMutation(newTicketMutation, {
+    onCompleted: () => {
+      history.goBack();
+    },
     onError: (error: ApolloError) => {
       if ((error.networkError as ServerParseError).statusCode === 401) {
         localStorage.setItem('authed', 'false');
@@ -96,9 +131,23 @@ export default function NewTicketView() {
     }
   });
 
+  const handleNewTicket = () => {
+    addNewTicket({
+      variables: {
+        title,
+        description,
+        assignedTo,
+        status,
+        priority,
+        dueDate: dueDate?.toISOString(),
+      }
+    });
+  };
+
   const statuses = ['new', 'pending', 'started', 'in progress', 'done', 'deleted', 'archived'];
   const statusLabels = ['New', 'Pending', 'Started', 'In Progress', 'Done', 'Deleted', 'Archived'];
   const priorities = [1, 2, 3, 4, 5];
+
   return (
     <React.Fragment>
       <div className={classes.layout}>
@@ -113,6 +162,8 @@ export default function NewTicketView() {
                 id='title'
                 name='title'
                 label='Title'
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
                 fullWidth
               />
             </Grid>
@@ -123,6 +174,8 @@ export default function NewTicketView() {
                 name='description'
                 label='Description'
                 rows={6}
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
                 multiline
                 fullWidth
               />
@@ -136,6 +189,8 @@ export default function NewTicketView() {
                   labelId='status-label'
                   label='Status'
                   defaultValue='new'
+                  value={status}
+                  onChange={(event: React.ChangeEvent<{ value: unknown }>) => setStatus(event.target.value as string)}
                   fullWidth
                 >
                   {
@@ -158,6 +213,8 @@ export default function NewTicketView() {
                   name='priority'
                   labelId='priority-label'
                   label='Priority'
+                  value={priority}
+                  onChange={(event: React.ChangeEvent<{ value: unknown }>) => setPriority(event.target.value as string)}
                   fullWidth
                 >
                   {
@@ -173,12 +230,24 @@ export default function NewTicketView() {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                variant='outlined'
-                id='assignedTo'
-                name='assignedTo'
-                label='Assigned To'
+              <Autocomplete
                 fullWidth
+                autoSelect
+                autoHighlight
+                loading={loadingTechniciansList}
+                id='status-combo-box'
+                onChange={(_: any, value: any) => setAssignedTo(value.uid)}
+                options={techniciansList}
+                getOptionLabel={(option: IUser) => `${option.firstName} ${option.lastName}`}
+                renderInput={(params) => <TextField
+                  {...params}
+                  variant='outlined'
+                  id='assignedTo'
+                  name='assignedTo'
+                  label='Assigned To'
+                  value={assignedTo}
+                  fullWidth
+                />}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -208,8 +277,9 @@ export default function NewTicketView() {
               variant="contained"
               color="primary"
               className={classes.button}
+              onClick={handleNewTicket}
             >
-              Save
+              {addTicketLoading ? <CircularProgress className={classes.progress} /> : 'Save'}
             </Button>
           </div>
         </Paper>

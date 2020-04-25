@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TicketView() {
-  const [ticketsData, setTicketsData] = useState([['']]);
+  const [ticketsData, setTicketsData] = useState<string[][]>([]);
   const dispatch = useDispatch();
   const history = useHistory();
   const query = gql`

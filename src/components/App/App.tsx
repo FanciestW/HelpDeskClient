@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { ApolloProvider, ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 import { ThemeProvider } from '@material-ui/styles';
 import { makeStyles, responsiveFontSizes, createMuiTheme, CssBaseline } from '@material-ui/core';
@@ -20,7 +20,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 const App: React.FC = () => {
-  const dispatch = useDispatch();
   const isAuthed: boolean = useSelector<IRootReducer, boolean>(state => state.authedReducer.isAuthed);
 
   // Styling
