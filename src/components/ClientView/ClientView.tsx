@@ -28,7 +28,7 @@ export default function ClientView() {
 
   const getTechniciansQuery = gql`
     query {
-      getTechnicians {
+      getClients {
         uid
         firstName
         middleName
@@ -36,13 +36,12 @@ export default function ClientView() {
         email
         phone
         company
-        isTechnician
       }
     }
   `;
   useQuery(getTechniciansQuery, {
-    onCompleted: (data: { getTechnicians: IUser[] }) => {
-      const formattedData = data?.getTechnicians?.map((user: IUser): string[] => {
+    onCompleted: (data: { getClients: IUser[] }) => {
+      const formattedData = data?.getClients?.map((user: IUser): string[] => {
         return [
           user.firstName || '',
           user.middleName || '',
@@ -110,14 +109,6 @@ export default function ClientView() {
       options: {
         filter: true,
         sort: true,
-      }
-    },
-    {
-      name: 'isTechnician',
-      label: 'Is Technician',
-      options: {
-        filter: true,
-        sort: false,
       }
     }
   ];
