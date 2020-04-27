@@ -18,7 +18,6 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/picker
 import DateFnsUtils from '@date-io/date-fns';
 import { useDispatch } from 'react-redux';
 import { useQuery, useMutation, gql, ApolloError, ServerParseError } from '@apollo/client';
-import ITicket from '../../interfaces/Ticket';
 import IUser from '../../interfaces/User';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 
@@ -59,10 +58,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-//TODO::Add states and mutation call.
-
 export default function NewTicketView() {
-  const [newTicketRes] = useState<ITicket | undefined>(undefined);
   const [techniciansList, setTechniciansList] = useState<IUser[] | []>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');

@@ -20,9 +20,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TicketView() {
-  const [ticketsData, setTicketsData] = useState<string[][]>([]);
   const dispatch = useDispatch();
   const history = useHistory();
+  const classes = useStyles();
+
+  const [ticketsData, setTicketsData] = useState<string[][]>([]);
+  
   const query = gql`
     query {
       getTickets {
@@ -47,7 +50,6 @@ export default function TicketView() {
       }
     }
   `;
-  const classes = useStyles();
   useQuery(query, {
     onCompleted: (data: { getTickets: ITicket[] }) => {
       const formattedData = data?.getTickets?.map((tix: ITicket): string[] => {
@@ -83,7 +85,7 @@ export default function TicketView() {
       label: 'Title',
       options: {
         filter: false,
-        sort: false,
+        sort: true,
       }
     },
     {
@@ -91,7 +93,7 @@ export default function TicketView() {
       label: 'Description',
       options: {
         filter: false,
-        sort: false,
+        sort: true,
       }
     },
     {

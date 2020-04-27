@@ -12,6 +12,7 @@ import Navbar from '../Navbar/Navbar';
 import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
 import Login from '../Login/Login';
+import ClientView from '../ClientView/ClientView';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -54,6 +55,9 @@ const App: React.FC = () => {
               </Route>
               <Route path='/ticket/new'>
                 { isAuthed ? <NewTicketView /> : <Redirect to='/login' /> }
+              </Route>
+              <Route path='/clients'>
+                { isAuthed ? <ClientView /> : <Redirect to='/login' /> }
               </Route>
               <Route path='/login'>
                 { !isAuthed ? <Login /> : <Redirect to='/dashboard' /> }
