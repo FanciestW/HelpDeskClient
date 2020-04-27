@@ -133,7 +133,7 @@ export default function Login() {
           open={errorSnackbarIsOpen}
           autoHideDuration={3000}
           onClose={() => setErrorSnackbarIsOpen(false)}
-          message="Note archived"
+          message="Error"
           action={
             <React.Fragment>
               Unable to login, please try again.
