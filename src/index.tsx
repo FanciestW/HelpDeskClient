@@ -5,18 +5,31 @@ import App from './components/App/App';
 import * as serviceWorker from './serviceWorker';
 import './index.css';
 import { combineReducers, createStore } from 'redux';
+import { ApolloProvider, ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 import { authedReducer } from './redux/reducers/AuthedReducer';
+import { userReducer } from './redux/reducers/UserReducer';
 
 const rootReducer = combineReducers({
   authedReducer,
+  userReducer,
 });
 
 const store = createStore(rootReducer);
 
+// GraphQL Client
+const GraphQLClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: '/api/graphql',
+  })
+});
+
 ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
-      <App />
+      <ApolloProvider client={GraphQLClient}>
+        <App />
+      </ApolloProvider>
     </React.StrictMode>
   </Provider>,
   document.getElementById('root')

@@ -6,7 +6,7 @@ interface IUser {
     email?: string;
     phone?: string;
     company?: string;
-    isTechnician?: string;
+    isTechnician?: boolean;
     createdAt?: string;
 }
 
