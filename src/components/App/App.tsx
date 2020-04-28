@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch, useStore } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ThemeProvider } from '@material-ui/styles';
-import { makeStyles, responsiveFontSizes, createMuiTheme, CssBaseline, Button } from '@material-ui/core';
+import { makeStyles, responsiveFontSizes, createMuiTheme, CssBaseline } from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { useLazyQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import { IRootReducer } from '../../redux/IRootReducer';
@@ -13,8 +13,6 @@ import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
 import Login from '../Login/Login';
 import PeoplesView from '../PeoplesView/PeoplesView';
-import TechniciansView from '../TechniciansView/TechniciansView';
-import ClientsView from '../ClientsView/ClientsView';
 import IUser from '../../interfaces/User';
 import { updateUser } from '../../redux/actions/UserActions';
 import { changeAuthed } from '../../redux/actions/AuthedActions';

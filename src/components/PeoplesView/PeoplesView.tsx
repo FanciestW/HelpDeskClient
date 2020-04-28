@@ -143,6 +143,7 @@ query {
             filterType: 'multiselect',
             print: false,
             download: false,
+            rowsPerPageOptions: [10, 20, 50],
           }}
         />
         <Tooltip title={props.show === 'clients' ? 'Add Client' : 'Add Technician'}>
