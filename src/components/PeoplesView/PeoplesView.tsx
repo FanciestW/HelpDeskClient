@@ -2,7 +2,18 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, Redirect } from 'react-router-dom';
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
-import { Tooltip, Fab, makeStyles } from '@material-ui/core';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  Tooltip,
+  Fab,
+  makeStyles,
+} from '@material-ui/core';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import MUIDataTable from 'mui-datatables';
@@ -27,6 +38,7 @@ export default function PeoplesView(props: IPeoplesViewProps) {
   const { isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
 
   const [peoplesListData, setPeoplesListData] = useState<string[][]>([]);
+  const [requestDialogOpen, setRequestDialogOpen] = useState<boolean>(false);
 
   const getClientsQuery = gql`
     query {
@@ -131,7 +143,7 @@ query {
   ];
 
   if (!isTechnician && props.show === 'clients') {
-    return(<Redirect to='/technicians' />);
+    return (<Redirect to='/technicians' />);
   } else {
     return (
       <div>
@@ -146,11 +158,35 @@ query {
             rowsPerPageOptions: [10, 20, 50],
           }}
         />
+        <Dialog open={requestDialogOpen} onClose={() => setRequestDialogOpen(false)} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Send {props.show === 'clients' ? 'Client' : 'Technician'} Request</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              To send a connection request, please enter your email address here. We will send your request.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Email Address"
+              type="email"
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setRequestDialogOpen(false)} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={() => setRequestDialogOpen(false)} color="primary">
+              Send Request
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Tooltip title={props.show === 'clients' ? 'Add Client' : 'Add Technician'}>
           <Fab className={classes.addFab}
             aria-label='add'
             color='primary'
-            onClick={() => history.push('/requests/new')}>
+            onClick={() => setRequestDialogOpen(true)}>
             <PersonAddIcon />
           </Fab>
         </Tooltip>
