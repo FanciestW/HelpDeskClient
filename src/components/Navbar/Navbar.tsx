@@ -23,6 +23,7 @@ import {
   Dashboard as DashboardIcon,
   AssignmentLate as AssignmentLateIcon,
   FormatListBulleted as TasksIcon,
+  SupervisorAccount as SupervisorAccountIcon,
 } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
 import { useDispatch,  useSelector } from 'react-redux';
@@ -115,12 +116,22 @@ export default function Navbar() {
             <ListItemText primary='Tasks List' />
           </ListItem>
         </Link>
-        <Link to={isTechnician ? '/clients' : '/technicians'} className={classes.routerLink}>
+        {
+          isTechnician ? <Link to='/clients' className={classes.routerLink}>
+            <ListItem button>
+              <ListItemIcon className='drawer-icon'>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText primary='Clients' />
+            </ListItem>
+          </Link> : null
+        }
+        <Link to='/technicians' className={classes.routerLink}>
           <ListItem button>
             <ListItemIcon className='drawer-icon'>
-              <PeopleIcon />
+              <SupervisorAccountIcon />
             </ListItemIcon>
-            <ListItemText primary={isTechnician ? 'Clients' : 'Technicians'} />
+            <ListItemText primary='Technicians' />
           </ListItem>
         </Link>
         <Link to='/profile' className={classes.routerLink}>

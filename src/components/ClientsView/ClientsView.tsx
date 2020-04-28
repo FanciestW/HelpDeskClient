@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
@@ -20,31 +20,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function PeopleView() {
+export default function ClientsView() {
   const history = useHistory();
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
 
-  const [peoplesListData, setPeoplesListData] = useState<string[][]>([]);
+  const [techniciansList, setTechniciansList] = useState<string[][]>([]);
 
   const getClientsQuery = gql`
-    query {
-      getClients {
-        uid
-        firstName
-        middleName
-        lastName
-        email
-        phone
-        company
-      }
-    }
-  `;
-
-  const getTechniciansQuery = gql`
 query {
-  getTechnicians {
+  getClients {
     uid
     firstName
     middleName
@@ -55,10 +41,9 @@ query {
   }
 }
 `;
-  useQuery(isTechnician ? getClientsQuery : getTechniciansQuery, {
-    onCompleted: (data: { getClients?: IUser[]; getTechnicians?: IUser[] }) => {
-      const peopleData = isTechnician ? data?.getClients : data?.getTechnicians;
-      const formattedData = peopleData?.map((user: IUser): string[] => {
+  const { refetch } = useQuery(getClientsQuery, {
+    onCompleted: (data: { getClients?: IUser[] }) => {
+      const formattedData = data?.getClients?.map((user: IUser): string[] => {
         return [
           user.firstName || '',
           user.middleName || '',
@@ -69,7 +54,7 @@ query {
           user.isTechnician ? 'Yes' : 'No',
         ];
       });
-      setPeoplesListData(formattedData || []);
+      setTechniciansList(formattedData || []);
     },
     onError: (error: ApolloError) => {
       if ((error.networkError as ServerParseError).statusCode === 401) {
@@ -78,6 +63,10 @@ query {
       }
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [uid]);
 
   const columns = [
     {
@@ -133,16 +122,16 @@ query {
   return (
     <div>
       <MUIDataTable
-        data={peoplesListData}
+        data={techniciansList}
         columns={columns}
-        title={isTechnician ? 'Clients List' : 'Technicians List'}
+        title='Clients List'
         options={{
           filterType: 'multiselect',
           print: false,
           download: false,
         }}
       />
-      <Tooltip title='New Ticket'>
+      <Tooltip title='Add Client'>
         <Fab className={classes.addFab}
           aria-label='add'
           color='primary'

@@ -12,7 +12,9 @@ import Navbar from '../Navbar/Navbar';
 import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
 import Login from '../Login/Login';
-import PeopleView from '../PeopleView/PeopleView';
+import PeoplesView from '../PeoplesView/PeoplesView';
+import TechniciansView from '../TechniciansView/TechniciansView';
+import ClientsView from '../ClientsView/ClientsView';
 import IUser from '../../interfaces/User';
 import { updateUser } from '../../redux/actions/UserActions';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
@@ -100,16 +102,12 @@ const App: React.FC = () => {
             <Route path='/clients'>
               {
                 isAuthed ?
-                  user?.isTechnician ? <PeopleView /> : <Redirect to='/technicians' />
+                  user?.isTechnician ? <PeoplesView show='clients' /> : <Redirect to='/technicians' />
                   : <Redirect to='/login' />
               }
             </Route>
             <Route path='/technicians'>
-              {
-                isAuthed ?
-                  !user?.isTechnician ? <PeopleView /> : <Redirect to='/clients' />
-                  : <Redirect to='/login' />
-              }
+              { isAuthed ? <PeoplesView show='technicians' /> : <Redirect to='/login' /> }
             </Route>
             <Route path='/login'>
               {!isAuthed ? <Login /> : <Redirect to='/dashboard' />}

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 // eslint-disable-next-line no-unused-vars
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DashboardCard from '../DashboardCard/DashboardCard';
+import IUser from '../../interfaces/User';
+import { IRootReducer } from '../../redux/IRootReducer';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 
 const useStyles = makeStyles(() => ({
@@ -25,6 +27,8 @@ const Dashboard = () => {
   const classes = useStyles();
   const [cardData, setCardData] = useState(['N/A', 'N/A', 'N/A']);
 
+  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+
   const query = gql`
     query {
       getOpenTickets {
@@ -38,7 +42,7 @@ const Dashboard = () => {
       }
     }
   `;
-  useQuery(query, {
+  const { refetch } = useQuery(query, {
     onCompleted: (data) => {
       setCardData([
         data?.getOpenTickets?.length?.toString() || 'N/A',
@@ -53,6 +57,10 @@ const Dashboard = () => {
       }
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [uid]);
 
   // Static UI Component Text for Dashboard Card Components.
   const cardTitles = ['Open Tickets', 'Upcoming Tasks', 'Clients'];
