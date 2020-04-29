@@ -196,7 +196,7 @@ export default function PeoplesView(props: IPeoplesViewProps) {
             filterType: 'multiselect',
             print: false,
             download: false,
-            rowsPerPageOptions: [10, 20, 50],
+            rowsPerPageOptions: [5, 10, 20, 50],
           }}
         />
         <NoticeSnackbar

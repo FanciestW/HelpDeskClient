@@ -81,6 +81,7 @@ export default function Navbar() {
     await Axios.post('/api/user/logout');
     localStorage.setItem('authed', 'false');
     dispatch(changeAuthed(false));
+    window.location.reload();
   }
 
   const handleToggleMenu = () => {
