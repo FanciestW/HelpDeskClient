@@ -37,17 +37,17 @@ const DashboardCard = (props: DashboardCardProps) => {
         </Typography>
       </CardContent>
       <CardActions className={classes.cardActions}>
-        <Button size="small">{props.buttonText}</Button>
+        <Button size='small' href={props.buttonDestination}>{props.buttonText}</Button>
       </CardActions>
     </Card>
   );
 };
 
 interface DashboardCardProps {
-  title: string,
-  data: any,
-  buttonText?: string | null,
-  buttonDestination?: string | null,
+  title: string;
+  data: any;
+  buttonText?: string;
+  buttonDestination?: string;
 }
 
 export default DashboardCard;
