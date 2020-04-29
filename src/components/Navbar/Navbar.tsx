@@ -62,7 +62,7 @@ export default function Navbar() {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const { isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user) || {};
 
   const [menuIsOpen, setmenuIsOpen] = useState(false);
   const [theme] = useState(localStorage.getItem('theme') || 'light');

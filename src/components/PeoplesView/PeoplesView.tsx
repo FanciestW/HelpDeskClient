@@ -36,7 +36,7 @@ export default function PeoplesView(props: IPeoplesViewProps) {
   const dispatch = useDispatch();
   const classes = useStyles();
   
-  const { uid, isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { uid, isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user) || {};
 
   const [peoplesListData, setPeoplesListData] = useState<string[][]>([]);
   const [requestDialogOpen, setRequestDialogOpen] = useState<boolean>(false);

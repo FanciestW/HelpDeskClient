@@ -27,7 +27,7 @@ export default function TicketView() {
   const classes = useStyles();
 
   const [ticketsData, setTicketsData] = useState<string[][]>([]);
-  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user) || {};
   
   const query = gql`
     query {
