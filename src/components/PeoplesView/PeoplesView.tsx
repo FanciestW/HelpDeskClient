@@ -19,6 +19,7 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import MUIDataTable from 'mui-datatables';
 import IUser from '../../interfaces/User';
 import { IRootReducer } from '../../redux/IRootReducer';
+import NoticeSnackbar, { INoticeSnackbar } from '../NoticeSnackbar/NoticeSnackbar';
 
 const useStyles = makeStyles((theme) => ({
   addFab: {
@@ -41,6 +42,11 @@ export default function PeoplesView(props: IPeoplesViewProps) {
   const [requestDialogOpen, setRequestDialogOpen] = useState<boolean>(false);
   const [requestEmail, setRequestEmail] = useState<string>('');
 
+  // Snackbar states
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'warning' | 'info'>('info');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
   const newRequestMutation = gql`
     mutation NewRequest($recipientEmail: String!) {
       newEmailRequest(recipientEmail: $recipientEmail) {
@@ -55,8 +61,9 @@ export default function PeoplesView(props: IPeoplesViewProps) {
   `;
   const [sendRequest, { loading: requestLoading, error: requestError }] = useMutation(newRequestMutation, {
     onCompleted: () => {
-      // TODO::Make snackbar for error and success.
-      console.log('request sent');
+      setSnackbarMessage('Request Sent');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
       setRequestDialogOpen(false);
     },
     onError: (error: ApolloError) => {
@@ -64,7 +71,9 @@ export default function PeoplesView(props: IPeoplesViewProps) {
         localStorage.setItem('authed', 'false');
         dispatch(changeAuthed(false));
       } else {
-        console.log('error occurred creating new request' + error);
+        setSnackbarMessage('Error: Bad Request');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       }
     }
   });
@@ -189,6 +198,11 @@ export default function PeoplesView(props: IPeoplesViewProps) {
             download: false,
             rowsPerPageOptions: [10, 20, 50],
           }}
+        />
+        <NoticeSnackbar
+          severity={snackbarSeverity}
+          message={snackbarMessage}
+          open={snackbarOpen}
         />
         <Dialog open={requestDialogOpen} onClose={() => setRequestDialogOpen(false)} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">Send {props.show === 'clients' ? 'Client' : 'Technician'} Request</DialogTitle>
