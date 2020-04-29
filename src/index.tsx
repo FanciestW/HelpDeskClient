@@ -21,7 +21,17 @@ const GraphQLClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
     uri: '/api/graphql',
-  })
+  }),
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'cache-first',
+      errorPolicy: 'ignore',
+    },
+    mutate: {
+      fetchPolicy: 'network-only',
+      errorPolicy: 'ignore',
+    }
+  }
 });
 
 ReactDOM.render(
