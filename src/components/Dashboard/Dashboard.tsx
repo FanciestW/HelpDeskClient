@@ -27,9 +27,9 @@ const Dashboard = () => {
   const classes = useStyles();
   const [cardData, setCardData] = useState(['N/A', 'N/A', 'N/A']);
 
-  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { uid, isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
 
-  const query = gql`
+  const technicianQery = gql`
     query {
       getOpenTickets {
         ticketId
@@ -42,13 +42,34 @@ const Dashboard = () => {
       }
     }
   `;
-  const { refetch } = useQuery(query, {
+  const clientQuery = gql`
+  query {
+    getCreatedTickets {
+      ticketId
+    }
+    getOpenTickets {
+      ticketId
+    }
+    getTechnicians {
+      uid
+    }
+  }
+`;
+  const { refetch } = useQuery(isTechnician ? technicianQery : clientQuery, {
     onCompleted: (data) => {
-      setCardData([
-        data?.getOpenTickets?.length?.toString() || 'N/A',
-        data?.getUpcomingTasks?.length?.toString() || 'N/A',
-        data?.getClients?.length?.toString() || 'N/A',
-      ]);
+      if (isTechnician) {
+        setCardData([
+          data?.getOpenTickets?.length?.toString() || 'N/A',
+          data?.getUpcomingTasks?.length?.toString() || 'N/A',
+          data?.getClients?.length?.toString() || 'N/A',
+        ]);
+      } else {
+        setCardData([
+          data?.getCreatedTickets?.length?.toString() || 'N/A',
+          data?.getOpenTickets?.length?.toString() || 'N/A',
+          data?.getTechnicians?.length?.toString() || 'N/A',
+        ]);
+      }
     },
     onError: (error: ApolloError) => {
       if ((error.networkError as ServerParseError).statusCode === 401) {
@@ -63,9 +84,9 @@ const Dashboard = () => {
   }, [uid]);
 
   // Static UI Component Text for Dashboard Card Components.
-  const cardTitles = ['Open Tickets', 'Upcoming Tasks', 'Clients'];
-  const cardButtonText = ['See Open Tickets', 'See Tasks', 'Clients List'];
-  const cardButtonDestination = ['/tickets', '/tasks', '/clients'];
+  const cardTitles = isTechnician ? ['Open Tickets', 'Upcoming Tasks', 'Clients'] : ['My Tickets', 'Open Tickets', 'My Technicians'];
+  const cardButtonText = isTechnician ? ['See Open Tickets', 'See Tasks', 'Clients List'] : ['See My Tickets', 'See Open Tickets', 'Technicians List'];
+  const cardButtonDestination = isTechnician ? ['/tickets', '/tasks', '/clients'] : ['/tickets', '/tickets', '/technicians'];
 
   return (
     <div className={classes.root}>
