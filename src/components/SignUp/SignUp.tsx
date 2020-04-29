@@ -56,11 +56,11 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
-  const [isTechnician, setIsTechnician] = useState('no');
-  const [errorSnackbarIsOpen, setErrorSnackbarIsOpen] = useState(false);
+  const [isTechnician, setIsTechnician] = useState<boolean>(false);
+  const [errorSnackbarIsOpen, setErrorSnackbarIsOpen] = useState<boolean>(false);
 
   const handleIsTechnician = (event: any) => {
-    setIsTechnician(event.target.value);
+    setIsTechnician(event.target.value === 'true');
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -213,8 +213,8 @@ export default function SignUp() {
               <FormControl component='fieldset'>
                 <FormLabel component='legend'>Are You a Technician?</FormLabel>
                 <RadioGroup aria-label='isTechnician' name='isTechnician' value={isTechnician} onChange={handleIsTechnician}>
-                  <FormControlLabel value='yes' control={<Radio color='primary'/>} label='Yes' />
-                  <FormControlLabel value='no' control={<Radio color='primary'/>} label='No' />
+                  <FormControlLabel value={true} control={<Radio color='primary'/>} label='Yes' />
+                  <FormControlLabel value={false} control={<Radio color='primary'/>} label='No' />
                 </RadioGroup>
               </FormControl>
             </Grid>
