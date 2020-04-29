@@ -48,7 +48,8 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [errorSnackbarIsOpen, setErrorSnackbarIsOpen] = useState(false);
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent ) => {
+    e.preventDefault();
     try {
       const loginData = { email, password };
       const res = await Axios.post('/api/user/login', loginData);
@@ -64,62 +65,62 @@ export default function Login() {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component='main' maxWidth='xs'>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography component='h1' variant='h5'>
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} onSubmit={handleLogin} noValidate>
           <TextField
-            variant="outlined"
-            margin="normal"
+            variant='outlined'
+            margin='normal'
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id='email'
+            label='Email Address'
+            name='email'
+            autoComplete='email'
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             autoFocus
           />
           <TextField
-            variant="outlined"
-            margin="normal"
+            variant='outlined'
+            margin='normal'
             required
             fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
+            name='password'
+            label='Password'
+            type='password'
+            id='password'
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            autoComplete="current-password"
+            autoComplete='current-password'
           />
           <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+            control={<Checkbox value='remember' color='primary' />}
+            label='Remember me'
           />
           <Button
             fullWidth
-            variant="contained"
-            color="primary"
+            type='submit'
+            variant='contained'
+            color='primary'
             className={classes.submit}
-            onClick={handleLogin}
           >
             Sign In
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              <Link href='#' variant='body2'>
                 Forgot password?
               </Link>
             </Grid>
             <Grid item>
-              <Link href="/signup" variant="body2">
+              <Link href='/signup' variant='body2'>
                 {'Don\'t have an account? Sign Up'}
               </Link>
             </Grid>
@@ -133,12 +134,12 @@ export default function Login() {
           open={errorSnackbarIsOpen}
           autoHideDuration={3000}
           onClose={() => setErrorSnackbarIsOpen(false)}
-          message="Error"
+          message='Error'
           action={
             <React.Fragment>
               Unable to login, please try again.
-              <IconButton size="small" aria-label="close" color="inherit" onClick={() => setErrorSnackbarIsOpen(false)}>
-                <CloseIcon fontSize="small" />
+              <IconButton size='small' aria-label='close' color='inherit' onClick={() => setErrorSnackbarIsOpen(false)}>
+                <CloseIcon fontSize='small' />
               </IconButton>
             </React.Fragment>
           }
