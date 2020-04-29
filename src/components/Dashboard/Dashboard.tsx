@@ -27,7 +27,7 @@ const Dashboard = () => {
   const classes = useStyles();
   const [cardData, setCardData] = useState(['N/A', 'N/A', 'N/A']);
 
-  const { uid, isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { uid, isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user) || {};
 
   const technicianQery = gql`
     query {

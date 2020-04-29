@@ -13,6 +13,7 @@ import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
 import Login from '../Login/Login';
 import PeoplesView from '../PeoplesView/PeoplesView';
+import RequestsView from '../RequestsView/RequestsView';
 import IUser from '../../interfaces/User';
 import { updateUser } from '../../redux/actions/UserActions';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
@@ -89,13 +90,13 @@ const App: React.FC = () => {
           {isAuthed ? <Navbar /> : null}
           <Switch>
             <Route path='/dashboard'>
-              {isAuthed ? <Dashboard /> : <Redirect to='/login' />}
+              { isAuthed ? <Dashboard /> : <Redirect to='/login' /> }
             </Route>
             <Route path='/tickets'>
-              {isAuthed ? <TicketView /> : <Redirect to='/login' />}
+              { isAuthed ? <TicketView /> : <Redirect to='/login' /> }
             </Route>
             <Route path='/ticket/new'>
-              {isAuthed ? <NewTicketView /> : <Redirect to='/login' />}
+              { isAuthed ? <NewTicketView /> : <Redirect to='/login' /> }
             </Route>
             <Route path='/clients'>
               {
@@ -107,11 +108,14 @@ const App: React.FC = () => {
             <Route path='/technicians'>
               { isAuthed ? <PeoplesView show='technicians' /> : <Redirect to='/login' /> }
             </Route>
+            <Route path='/requests'>
+              { isAuthed ? <RequestsView /> : <Redirect to='/login' /> }
+            </Route>
             <Route path='/login'>
-              {!isAuthed ? <Login /> : <Redirect to='/dashboard' />}
+              { !isAuthed ? <Login /> : <Redirect to='/dashboard' /> }
             </Route>
             <Route path='/signup'>
-              {!isAuthed ? <SignUp /> : <Redirect to='/dashboard' />}
+              { !isAuthed ? <SignUp /> : <Redirect to='/dashboard' /> }
             </Route>
             <Route exact path='/'>
               <Redirect to='/dashboard' />

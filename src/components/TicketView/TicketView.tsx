@@ -27,7 +27,7 @@ export default function TicketView() {
   const classes = useStyles();
 
   const [ticketsData, setTicketsData] = useState<string[][]>([]);
-  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user) || {};
   
   const query = gql`
     query {
@@ -155,7 +155,7 @@ export default function TicketView() {
           filterType: 'multiselect',
           print: false,
           download: false,
-          rowsPerPageOptions: [10, 20, 50],
+          rowsPerPageOptions: [5, 10, 20, 50],
         }}
       />
       <Tooltip title='New Ticket'>
