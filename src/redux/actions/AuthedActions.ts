@@ -1,5 +1,5 @@
 export enum EAuthedActions {
-  CHANGE_AUTHED = 'CHANGE_AUTHED'
+  CHANGE_AUTHED = 'CHANGE_AUTHED',
 }
 
 export function changeAuthed(isAuthed: boolean) {

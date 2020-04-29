@@ -23,10 +23,13 @@ import {
   Dashboard as DashboardIcon,
   AssignmentLate as AssignmentLateIcon,
   FormatListBulleted as TasksIcon,
+  SupervisorAccount as SupervisorAccountIcon,
 } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch,  useSelector } from 'react-redux';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
+import { IRootReducer } from '../../redux/IRootReducer';
+import IUser from '../../interfaces/User';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,6 +61,8 @@ export default function Navbar() {
   const classes = useStyles();
   const dispatch = useDispatch();
 
+  const { isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+
   const [menuIsOpen, setmenuIsOpen] = useState(false);
   const [theme] = useState(localStorage.getItem('theme') || 'light');
 
@@ -83,48 +88,58 @@ export default function Navbar() {
 
   const sideNav = (
     <div className={classes.sideNav}
-      role="presentation"
+      role='presentation'
       onClick={handleToggleMenu}
       onKeyDown={handleToggleMenu}>
       <List>
-        <Link to="/dashboard" className={classes.routerLink}>
+        <Link to='/dashboard' className={classes.routerLink}>
           <ListItem button>
-            <ListItemIcon className="drawer-icon">
+            <ListItemIcon className='drawer-icon'>
               <DashboardIcon />
             </ListItemIcon>
-            <ListItemText primary="Dashboard" />
+            <ListItemText primary='Dashboard' />
           </ListItem>
         </Link>
-        <Link to="/tickets" className={classes.routerLink}>
+        <Link to='/tickets' className={classes.routerLink}>
           <ListItem button>
-            <ListItemIcon className="drawer-icon">
+            <ListItemIcon className='drawer-icon'>
               <AssignmentLateIcon />
             </ListItemIcon>
-            <ListItemText primary="Tickets" />
+            <ListItemText primary='Tickets' />
           </ListItem>
         </Link>
-        <Link to="/tasks" className={classes.routerLink}>
+        <Link to='/tasks' className={classes.routerLink}>
           <ListItem button>
-            <ListItemIcon className="drawer-icon">
+            <ListItemIcon className='drawer-icon'>
               <TasksIcon />
             </ListItemIcon>
-            <ListItemText primary="Tasks List" />
+            <ListItemText primary='Tasks List' />
           </ListItem>
         </Link>
-        <Link to="/tasks" className={classes.routerLink}>
+        {
+          isTechnician ? <Link to='/clients' className={classes.routerLink}>
+            <ListItem button>
+              <ListItemIcon className='drawer-icon'>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText primary='Clients' />
+            </ListItem>
+          </Link> : null
+        }
+        <Link to='/technicians' className={classes.routerLink}>
           <ListItem button>
-            <ListItemIcon className="drawer-icon">
-              <PeopleIcon />
+            <ListItemIcon className='drawer-icon'>
+              <SupervisorAccountIcon />
             </ListItemIcon>
-            <ListItemText primary="Clients" />
+            <ListItemText primary='Technicians' />
           </ListItem>
         </Link>
-        <Link to="/profile" className={classes.routerLink}>
+        <Link to='/profile' className={classes.routerLink}>
           <ListItem button>
-            <ListItemIcon className="drawer-icon">
+            <ListItemIcon className='drawer-icon'>
               <AccountCircleIcon />
             </ListItemIcon>
-            <ListItemText primary="My Profile" />
+            <ListItemText primary='My Profile' />
           </ListItem>
         </Link>
       </List>

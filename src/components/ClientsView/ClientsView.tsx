@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import { Tooltip, Fab, makeStyles } from '@material-ui/core';
@@ -7,6 +7,7 @@ import { changeAuthed } from '../../redux/actions/AuthedActions';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import MUIDataTable from 'mui-datatables';
 import IUser from '../../interfaces/User';
+import { IRootReducer } from '../../redux/IRootReducer';
 
 const useStyles = makeStyles((theme) => ({
   addFab: {
@@ -19,28 +20,29 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function ClientView() {
+export default function ClientsView() {
   const history = useHistory();
   const dispatch = useDispatch();
   const classes = useStyles();
+  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
 
-  const [clientsListData, setClientsListData] = useState<string[][]>([]);
+  const [techniciansList, setTechniciansList] = useState<string[][]>([]);
 
-  const getTechniciansQuery = gql`
-    query {
-      getClients {
-        uid
-        firstName
-        middleName
-        lastName
-        email
-        phone
-        company
-      }
-    }
-  `;
-  useQuery(getTechniciansQuery, {
-    onCompleted: (data: { getClients: IUser[] }) => {
+  const getClientsQuery = gql`
+query {
+  getClients {
+    uid
+    firstName
+    middleName
+    lastName
+    email
+    phone
+    company
+  }
+}
+`;
+  const { refetch } = useQuery(getClientsQuery, {
+    onCompleted: (data: { getClients?: IUser[] }) => {
       const formattedData = data?.getClients?.map((user: IUser): string[] => {
         return [
           user.firstName || '',
@@ -52,15 +54,19 @@ export default function ClientView() {
           user.isTechnician ? 'Yes' : 'No',
         ];
       });
-      setClientsListData(formattedData);
+      setTechniciansList(formattedData || []);
     },
     onError: (error: ApolloError) => {
-      if ((error.networkError as ServerParseError).statusCode === 401) {
+      if ((error.networkError as ServerParseError)?.statusCode === 401) {
         localStorage.setItem('authed', 'false');
         dispatch(changeAuthed(false));
       }
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [uid]);
 
   const columns = [
     {
@@ -116,7 +122,7 @@ export default function ClientView() {
   return (
     <div>
       <MUIDataTable
-        data={clientsListData}
+        data={techniciansList}
         columns={columns}
         title='Clients List'
         options={{
@@ -125,11 +131,11 @@ export default function ClientView() {
           download: false,
         }}
       />
-      <Tooltip title='New Ticket'>
+      <Tooltip title='Add Client'>
         <Fab className={classes.addFab}
           aria-label='add'
           color='primary'
-          onClick={() => history.push('/client/new')}>
+          onClick={() => history.push('/requests/new')}>
           <PersonAddIcon />
         </Fab>
       </Tooltip>

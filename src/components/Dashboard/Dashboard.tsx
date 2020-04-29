@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 // eslint-disable-next-line no-unused-vars
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DashboardCard from '../DashboardCard/DashboardCard';
+import IUser from '../../interfaces/User';
+import { IRootReducer } from '../../redux/IRootReducer';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 
 const useStyles = makeStyles(() => ({
@@ -25,7 +27,9 @@ const Dashboard = () => {
   const classes = useStyles();
   const [cardData, setCardData] = useState(['N/A', 'N/A', 'N/A']);
 
-  const query = gql`
+  const { uid, isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+
+  const technicianQery = gql`
     query {
       getOpenTickets {
         ticketId
@@ -38,26 +42,51 @@ const Dashboard = () => {
       }
     }
   `;
-  useQuery(query, {
+  const clientQuery = gql`
+  query {
+    getCreatedTickets {
+      ticketId
+    }
+    getOpenTickets {
+      ticketId
+    }
+    getTechnicians {
+      uid
+    }
+  }
+`;
+  const { refetch } = useQuery(isTechnician ? technicianQery : clientQuery, {
     onCompleted: (data) => {
-      setCardData([
-        data?.getOpenTickets?.length?.toString() || 'N/A',
-        data?.getUpcomingTasks?.length?.toString() || 'N/A',
-        data?.getClients?.length?.toString() || 'N/A',
-      ]);
+      if (isTechnician) {
+        setCardData([
+          data?.getOpenTickets?.length?.toString() || 'N/A',
+          data?.getUpcomingTasks?.length?.toString() || 'N/A',
+          data?.getClients?.length?.toString() || 'N/A',
+        ]);
+      } else {
+        setCardData([
+          data?.getCreatedTickets?.length?.toString() || 'N/A',
+          data?.getOpenTickets?.length?.toString() || 'N/A',
+          data?.getTechnicians?.length?.toString() || 'N/A',
+        ]);
+      }
     },
     onError: (error: ApolloError) => {
-      if ((error.networkError as ServerParseError).statusCode === 401) {
+      if ((error.networkError as ServerParseError)?.statusCode === 401) {
         localStorage.setItem('authed', 'false');
         dispatch(changeAuthed(false));
       }
     },
   });
 
+  useEffect(() => {
+    refetch();
+  }, [uid]);
+
   // Static UI Component Text for Dashboard Card Components.
-  const cardTitles = ['Open Tickets', 'Upcoming Tasks', 'Clients'];
-  const cardButtonText = ['See Open Tickets', 'See Tasks', 'Clients List'];
-  const cardButtonDestination = ['/tickets', '/tasks', '/clients'];
+  const cardTitles = isTechnician ? ['Open Tickets', 'Upcoming Tasks', 'Clients'] : ['My Tickets', 'Open Tickets', 'My Technicians'];
+  const cardButtonText = isTechnician ? ['See Open Tickets', 'See Tasks', 'Clients List'] : ['See My Tickets', 'See Open Tickets', 'Technicians List'];
+  const cardButtonDestination = isTechnician ? ['/tickets', '/tasks', '/clients'] : ['/tickets', '/tickets', '/technicians'];
 
   return (
     <div className={classes.root}>

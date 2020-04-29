@@ -63,8 +63,9 @@ export default function SignUp() {
     setIsTechnician(event.target.value);
   };
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e: React.FormEvent) => {
     // TODO::verify user inputs
+    e.preventDefault();
     try {
       const signUpData = {
         firstName,
@@ -97,7 +98,7 @@ export default function SignUp() {
         <Typography component='h1' variant='h5'>
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} onSubmit={handleSignUp} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={4}>
               <TextField autoFocus
@@ -209,20 +210,20 @@ export default function SignUp() {
               />
             </Grid>
             <Grid item xs={12}>
-              <FormControl component="fieldset">
-                <FormLabel component="legend">Are You a Technician?</FormLabel>
-                <RadioGroup aria-label="isTechnician" name="isTechnician" value={isTechnician} onChange={handleIsTechnician}>
-                  <FormControlLabel value="yes" control={<Radio color='primary'/>} label="Yes" />
-                  <FormControlLabel value="no" control={<Radio color='primary'/>} label="No" />
+              <FormControl component='fieldset'>
+                <FormLabel component='legend'>Are You a Technician?</FormLabel>
+                <RadioGroup aria-label='isTechnician' name='isTechnician' value={isTechnician} onChange={handleIsTechnician}>
+                  <FormControlLabel value='yes' control={<Radio color='primary'/>} label='Yes' />
+                  <FormControlLabel value='no' control={<Radio color='primary'/>} label='No' />
                 </RadioGroup>
               </FormControl>
             </Grid>
           </Grid>
           <Button
+            type='submit'
             variant='contained'
             color='primary'
             className={classes.submit}
-            onClick={handleSignUp}
           >
             Sign Up
           </Button>
@@ -242,12 +243,12 @@ export default function SignUp() {
           open={errorSnackbarIsOpen}
           autoHideDuration={3000}
           onClose={() => setErrorSnackbarIsOpen(false)}
-          message="Note archived"
+          message='Error'
           action={
             <React.Fragment>
               Unable to login, please try again.
-              <IconButton size="small" aria-label="close" color="inherit" onClick={() => setErrorSnackbarIsOpen(false)}>
-                <CloseIcon fontSize="small" />
+              <IconButton size='small' aria-label='close' color='inherit' onClick={() => setErrorSnackbarIsOpen(false)}>
+                <CloseIcon fontSize='small' />
               </IconButton>
             </React.Fragment>
           }

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import MUIDataTable from 'mui-datatables';
@@ -7,6 +7,8 @@ import { Fab, Tooltip, makeStyles } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 import ITicket from '../../interfaces/Ticket';
+import IUser from '../../interfaces/User';
+import { IRootReducer } from '../../redux/IRootReducer';
 
 const useStyles = makeStyles((theme) => ({
   addFab: {
@@ -25,6 +27,7 @@ export default function TicketView() {
   const classes = useStyles();
 
   const [ticketsData, setTicketsData] = useState<string[][]>([]);
+  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
   
   const query = gql`
     query {
@@ -50,7 +53,7 @@ export default function TicketView() {
       }
     }
   `;
-  useQuery(query, {
+  const { refetch } = useQuery(query, {
     onCompleted: (data: { getTickets: ITicket[] }) => {
       const formattedData = data?.getTickets?.map((tix: ITicket): string[] => {
         let ticketDueDate = 'No Date';
@@ -72,12 +75,16 @@ export default function TicketView() {
       setTicketsData(formattedData);
     },
     onError: (error: ApolloError) => {
-      if ((error.networkError as ServerParseError).statusCode === 401) {
+      if ((error.networkError as ServerParseError)?.statusCode === 401) {
         localStorage.setItem('authed', 'false');
         dispatch(changeAuthed(false));
       }
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [uid]);
 
   const columns = [
     {
@@ -148,6 +155,7 @@ export default function TicketView() {
           filterType: 'multiselect',
           print: false,
           download: false,
+          rowsPerPageOptions: [10, 20, 50],
         }}
       />
       <Tooltip title='New Ticket'>
