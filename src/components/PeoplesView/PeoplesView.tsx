@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
+import { useQuery, useMutation, gql, ApolloError, ServerParseError } from '@apollo/client';
 import {
   Button,
   Dialog,
@@ -34,10 +34,40 @@ const useStyles = makeStyles((theme) => ({
 export default function PeoplesView(props: IPeoplesViewProps) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  
   const { uid, isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
 
   const [peoplesListData, setPeoplesListData] = useState<string[][]>([]);
   const [requestDialogOpen, setRequestDialogOpen] = useState<boolean>(false);
+  const [requestEmail, setRequestEmail] = useState<string>('');
+
+  const newRequestMutation = gql`
+    mutation NewRequest($recipientEmail: String!) {
+      newEmailRequest(recipientEmail: $recipientEmail) {
+        recipient {
+          uid
+          firstName
+          lastName
+          email
+        }
+      }
+    }
+  `;
+  const [sendRequest, { loading: requestLoading, error: requestError }] = useMutation(newRequestMutation, {
+    onCompleted: () => {
+      // TODO::Make snackbar for error and success.
+      console.log('request sent');
+      setRequestDialogOpen(false);
+    },
+    onError: (error: ApolloError) => {
+      if ((error.networkError as ServerParseError)?.statusCode === 401) {
+        localStorage.setItem('authed', 'false');
+        dispatch(changeAuthed(false));
+      } else {
+        console.log('error occurred creating new request' + error);
+      }
+    }
+  });
 
   const getClientsQuery = gql`
     query {
@@ -82,7 +112,7 @@ export default function PeoplesView(props: IPeoplesViewProps) {
       setPeoplesListData(formattedData || []);
     },
     onError: (error: ApolloError) => {
-      if ((error.networkError as ServerParseError).statusCode === 401) {
+      if ((error.networkError as ServerParseError)?.statusCode === 401) {
         localStorage.setItem('authed', 'false');
         dispatch(changeAuthed(false));
       }
@@ -172,6 +202,8 @@ export default function PeoplesView(props: IPeoplesViewProps) {
               id="name"
               label="Email Address"
               type="email"
+              value={requestEmail}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setRequestEmail(event.target.value)}
               fullWidth
             />
           </DialogContent>
@@ -179,7 +211,7 @@ export default function PeoplesView(props: IPeoplesViewProps) {
             <Button onClick={() => setRequestDialogOpen(false)} color="primary">
               Cancel
             </Button>
-            <Button onClick={() => setRequestDialogOpen(false)} color="primary">
+            <Button onClick={() => sendRequest({ variables: { recipientEmail: requestEmail }})} color="primary">
               Send Request
             </Button>
           </DialogActions>

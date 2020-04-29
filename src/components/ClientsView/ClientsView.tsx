@@ -57,7 +57,7 @@ query {
       setTechniciansList(formattedData || []);
     },
     onError: (error: ApolloError) => {
-      if ((error.networkError as ServerParseError).statusCode === 401) {
+      if ((error.networkError as ServerParseError)?.statusCode === 401) {
         localStorage.setItem('authed', 'false');
         dispatch(changeAuthed(false));
       }
