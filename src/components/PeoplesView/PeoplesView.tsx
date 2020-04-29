@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import {
   Button,
@@ -32,10 +32,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PeoplesView(props: IPeoplesViewProps) {
-  const history = useHistory();
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { uid, isTechnician }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
 
   const [peoplesListData, setPeoplesListData] = useState<string[][]>([]);
   const [requestDialogOpen, setRequestDialogOpen] = useState<boolean>(false);
@@ -53,21 +52,20 @@ export default function PeoplesView(props: IPeoplesViewProps) {
       }
     }
   `;
-
   const getTechniciansQuery = gql`
-query {
-  getTechnicians {
-    uid
-    firstName
-    middleName
-    lastName
-    email
-    phone
-    company
-  }
-}
-`;
-  useQuery(props.show === 'clients' ? getClientsQuery : getTechniciansQuery, {
+    query {
+      getTechnicians {
+        uid
+        firstName
+        middleName
+        lastName
+        email
+        phone
+        company
+      }
+    }
+  `;
+  const { refetch } = useQuery(props.show === 'clients' ? getClientsQuery : getTechniciansQuery, {
     onCompleted: (data: { getClients?: IUser[]; getTechnicians?: IUser[] }) => {
       const peopleData = props.show === 'clients' ? data?.getClients : data?.getTechnicians;
       const formattedData = peopleData?.map((user: IUser): string[] => {
@@ -90,6 +88,10 @@ query {
       }
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [uid]);
 
   const columns = [
     {
