@@ -324,7 +324,7 @@ export default function TicketDetailView() {
               className={classes.button}
               onClick={handleTicketUpdate}
             >
-              {updateTicketLoading ? <CircularProgress className={classes.progress} /> : 'Save'}
+              {updateTicketLoading ? <CircularProgress className={classes.progress} /> : 'Update'}
             </Button>
           </div>
         </Paper>
