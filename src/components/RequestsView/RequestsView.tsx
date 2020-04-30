@@ -47,7 +47,7 @@ export default function RequestsView() {
   const [checked, setChecked] = useState<IConnectionRequest[]>([]);
   const [requestsData, setRequestsData] = useState<IConnectionRequest[]>([]);
 
-  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user) || {};
 
   const getRequestsQuery = gql`
     query {

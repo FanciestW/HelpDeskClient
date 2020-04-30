@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   CircularProgress,
@@ -16,11 +18,11 @@ import { useHistory } from 'react-router-dom';
 import { Autocomplete } from '@material-ui/lab';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useMutation, gql, ApolloError, ServerParseError } from '@apollo/client';
-import IUser from '../../interfaces/User';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 import { IRootReducer } from '../../redux/IRootReducer';
+import IUser from '../../interfaces/User';
+import ITicket from '../../interfaces/Ticket';
 
 const useStyles = makeStyles((theme) => ({
   layout: {
@@ -59,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function NewTicketView() {
+export default function TicketDetailView() {
   const [techniciansList, setTechniciansList] = useState<IUser[] | []>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -68,11 +70,54 @@ export default function NewTicketView() {
   const [priority, setPriority] = useState('');
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
 
-  const currentUser: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { ticketId } = useParams();
 
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+
+  const currentUser: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+
+  const ticketQuery = gql`
+    query GetATicket($ticketId: ID!) {
+      getATicket(ticketId: $ticketId) {
+        title
+        description
+        assignedTo {
+          uid
+          firstName
+          lastName
+          email
+        }
+        status
+        priority
+        dueDate
+      }
+    }
+  `;
+  const { refetch: refetchTicketData } = useQuery(ticketQuery, {
+    variables: {
+      ticketId,
+    },
+    onCompleted: (data: { getATicket: ITicket }) => {
+      setTitle(data.getATicket?.title ?? '');
+      setDescription(data.getATicket?.description ?? '');
+      setAssignedTo(`${data.getATicket?.assignedTo?.firstName} ${data.getATicket?.assignedTo?.lastName}`);
+      setStatus(data.getATicket?.status ?? 'new');
+      setPriority(data.getATicket?.priority?.toString() ?? '5');
+      setDueDate(new Date(data.getATicket?.dueDate ?? ''));
+    },
+    onError: (error: ApolloError) => {
+      if ((error.networkError as ServerParseError)?.statusCode === 401) {
+        localStorage.setItem('authed', 'false');
+        dispatch(changeAuthed(false));
+      }
+    }
+  });
+
+  useEffect(() => {
+    refetchTicketData();
+  }, [ticketId]);
 
   const technicianListQuery = gql`
     query {
@@ -84,7 +129,6 @@ export default function NewTicketView() {
       }
     }
   `;
-
   const { loading: loadingTechniciansList } = useQuery(technicianListQuery, {
     onCompleted: (data: { getTechnicians: IUser[] }) => {
       const { uid, firstName, lastName, email } = currentUser;
@@ -100,7 +144,7 @@ export default function NewTicketView() {
   });
 
   const newTicketMutation = gql`
-    mutation NewTicket(
+    mutation UpdateTicket(
       $title: String!,
       $description: String,
       $assignedTo: String,
@@ -108,7 +152,7 @@ export default function NewTicketView() {
       $priority: Int!,
       $dueDate: String
     ) {
-      newTicket(
+      updateTicket(
         title: $title,
         description: $description,
         assignedTo: $assignedTo,
@@ -120,7 +164,7 @@ export default function NewTicketView() {
       }
     }
   `;
-  const [addNewTicket, { loading: addTicketLoading }] = useMutation(newTicketMutation, {
+  const [updateTicket, { loading: updateTicketLoading }] = useMutation(newTicketMutation, {
     onCompleted: () => {
       history.goBack();
     },
@@ -132,8 +176,8 @@ export default function NewTicketView() {
     }
   });
 
-  const handleNewTicket = () => {
-    addNewTicket({
+  const handleTicketUpdate = () => {
+    updateTicket({
       variables: {
         title,
         description,
@@ -154,7 +198,7 @@ export default function NewTicketView() {
       <div className={classes.layout}>
         <Paper className={classes.paper}>
           <Typography className={classes.title} variant='h4' gutterBottom>
-            New Ticket Details
+            Ticket Details
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -278,9 +322,9 @@ export default function NewTicketView() {
               variant="contained"
               color="primary"
               className={classes.button}
-              onClick={handleNewTicket}
+              onClick={handleTicketUpdate}
             >
-              {addTicketLoading ? <CircularProgress className={classes.progress} /> : 'Save'}
+              {updateTicketLoading ? <CircularProgress className={classes.progress} /> : 'Save'}
             </Button>
           </div>
         </Paper>
