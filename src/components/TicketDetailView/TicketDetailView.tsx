@@ -145,6 +145,7 @@ export default function TicketDetailView() {
 
   const newTicketMutation = gql`
     mutation UpdateTicket(
+      $ticketId: ID!,
       $title: String!,
       $description: String,
       $assignedTo: String,
@@ -153,6 +154,7 @@ export default function TicketDetailView() {
       $dueDate: String
     ) {
       updateTicket(
+        ticketId: $ticketId,
         title: $title,
         description: $description,
         assignedTo: $assignedTo,
@@ -179,6 +181,7 @@ export default function TicketDetailView() {
   const handleTicketUpdate = () => {
     updateTicket({
       variables: {
+        ticketId,
         title,
         description,
         assignedTo: assignedToUid,
@@ -308,8 +311,10 @@ export default function TicketDetailView() {
                 <KeyboardDatePicker
                   fullWidth
                   disableToolbar
-                  disablePast
+                  minDate={new Date()}
+                  minDateMessage='Oh no! This ticket is overdue'
                   emptyLabel='No Due Date'
+                  invalidLabel='Testing'
                   variant='inline'
                   inputVariant='outlined'
                   format='MM/dd/yyyy'

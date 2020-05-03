@@ -255,7 +255,8 @@ export default function NewTicketView() {
                 <KeyboardDatePicker
                   fullWidth
                   disableToolbar
-                  disablePast
+                  minDate={new Date()}
+                  minDateMessage='Oh no! This ticket is overdue'
                   emptyLabel='No Due Date'
                   variant='inline'
                   inputVariant='outlined'
