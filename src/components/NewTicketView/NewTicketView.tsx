@@ -246,7 +246,6 @@ export default function NewTicketView() {
                   id='assignedTo'
                   name='assignedTo'
                   label='Assigned To'
-                  value={assignedTo}
                   fullWidth
                 />}
               />

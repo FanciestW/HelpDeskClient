@@ -65,7 +65,7 @@ export default function TicketDetailView() {
   const [techniciansList, setTechniciansList] = useState<IUser[] | []>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [assignedTo, setAssignedTo] = useState('');
+  const [assignedToUid, setAssignedToUid] = useState('');
   const [status, setStatus] = useState('');
   const [priority, setPriority] = useState('');
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
@@ -95,14 +95,14 @@ export default function TicketDetailView() {
       }
     }
   `;
-  const { refetch: refetchTicketData } = useQuery(ticketQuery, {
+  const { refetch: refetchTicketData, loading: loadingTicketData } = useQuery(ticketQuery, {
     variables: {
       ticketId,
     },
     onCompleted: (data: { getATicket: ITicket }) => {
       setTitle(data.getATicket?.title ?? '');
       setDescription(data.getATicket?.description ?? '');
-      setAssignedTo(`${data.getATicket?.assignedTo?.firstName} ${data.getATicket?.assignedTo?.lastName}`);
+      setAssignedToUid(data.getATicket?.assignedTo?.uid ?? '');
       setStatus(data.getATicket?.status ?? 'new');
       setPriority(data.getATicket?.priority?.toString() ?? '5');
       setDueDate(new Date(data.getATicket?.dueDate ?? ''));
@@ -181,12 +181,20 @@ export default function TicketDetailView() {
       variables: {
         title,
         description,
-        assignedTo,
+        assignedTo: assignedToUid,
         status,
         priority,
         dueDate: dueDate?.toISOString(),
       }
     });
+  };
+
+  const getAssignedToData = () => {
+    if (!loadingTicketData && !loadingTechniciansList) {
+      return techniciansList.find((user) => user.uid === assignedToUid);
+    } else {
+      return null;
+    }
   };
 
   const statuses = ['new', 'pending', 'started', 'in progress', 'done', 'deleted', 'archived'];
@@ -281,16 +289,16 @@ export default function TicketDetailView() {
                 autoHighlight
                 loading={loadingTechniciansList}
                 id='status-combo-box'
-                onChange={(_: any, value: any) => setAssignedTo(value.uid)}
+                onChange={(_: any, value: any) => setAssignedToUid(value.uid)}
                 options={techniciansList}
                 getOptionLabel={(option: IUser) => `${option.firstName} ${option.lastName}`}
+                value={getAssignedToData()}
                 renderInput={(params) => <TextField
                   {...params}
                   variant='outlined'
                   id='assignedTo'
                   name='assignedTo'
                   label='Assigned To'
-                  value={assignedTo}
                   fullWidth
                 />}
               />
