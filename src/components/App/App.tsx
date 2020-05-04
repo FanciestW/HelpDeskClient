@@ -8,6 +8,7 @@ import { IRootReducer } from '../../redux/IRootReducer';
 import Dashboard from '../Dashboard/Dashboard';
 import TicketView from '../TicketView/TicketView';
 import NewTicketView from '../NewTicketView/NewTicketView';
+import TicketDetailView from '../TicketDetailView/TicketDetailView';
 import Navbar from '../Navbar/Navbar';
 import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
@@ -97,6 +98,9 @@ const App: React.FC = () => {
             </Route>
             <Route path='/ticket/new'>
               { isAuthed ? <NewTicketView /> : <Redirect to='/login' /> }
+            </Route>
+            <Route path='/ticket/:ticketId'>
+              { isAuthed ? <TicketDetailView /> : <Redirect to='/login' /> }
             </Route>
             <Route path='/clients'>
               {

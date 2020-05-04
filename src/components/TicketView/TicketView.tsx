@@ -70,6 +70,7 @@ export default function TicketView() {
           tix.status || 'N/A',
           tix.priority?.toString() || 'N/A',
           ticketDueDate,
+          tix.ticketId || '',
         ];
       });
       setTicketsData(formattedData);
@@ -85,6 +86,10 @@ export default function TicketView() {
   useEffect(() => {
     refetch();
   }, [uid]);
+
+  const onTicketRowClick = (data: string[], cellMeta: { dataIndex: number; rowIndex: number }) => {
+    history.push(`/ticket/${ticketsData[cellMeta.dataIndex][7]}`);
+  };
 
   const columns = [
     {
@@ -140,7 +145,7 @@ export default function TicketView() {
       label: 'Due Date',
       options: {
         filter: false,
-        sort: true
+        sort: true,
       }
     }
   ];
@@ -156,6 +161,7 @@ export default function TicketView() {
           print: false,
           download: false,
           rowsPerPageOptions: [5, 10, 20, 50],
+          onRowClick: onTicketRowClick,
         }}
       />
       <Tooltip title='New Ticket'>
