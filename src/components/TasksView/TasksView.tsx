@@ -26,7 +26,7 @@ export default function TasksView() {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [ticketsData, setTicketsData] = useState<string[][]>([]);
+  const [tasksData, setTasksData] = useState<string[][]>([]);
   const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user) || {};
 
   const getTasksQuery = gql`
@@ -54,7 +54,25 @@ export default function TasksView() {
 
   const { refetch } = useQuery(getTasksQuery, {
     onCompleted: (data: { getTasks: ITask[] }) => {
-      console.log({ data, });
+      const formattedData = data?.getTasks?.map((task: ITask) => {
+        let dueDate = 'No Date';
+        try {
+          dueDate = Intl.DateTimeFormat('en-US').format(new Date(task.dueDate || '')).toString();
+        } catch (err) {
+          dueDate = 'No Date';
+        }
+        return [
+          task.title ? `${task.title?.substring(0, 40)}${task.title?.length > 40 ? '...' : ''}` : '',
+          task.description ? `${task.description?.substring(0, 80)}${task.description?.length > 80 ? '...' : ''}` : '',
+          task.createdBy ? `${task.createdBy?.firstName} ${task.createdBy?.lastName}` : '',
+          task.assignedTo ? `${task.assignedTo?.firstName} ${task.assignedTo?.lastName}` : '',
+          task.status || 'N/A',
+          task.priority?.toString() || 'N/A',
+          dueDate,
+          task.taskId || '',
+        ];
+      });
+      setTasksData(formattedData);
     },
     onError: (error: ApolloError) => {
       if ((error.networkError as ServerParseError)?.statusCode === 401) {
@@ -63,6 +81,14 @@ export default function TasksView() {
       }
     }
   });
+
+  useEffect(() => {
+    refetch();
+  }, [uid]);
+
+  const onTaskRowClick = (_data: string[], cellMeta: { dataIndex: number; rowIndex: number }) => {
+    history.push(`/task/${tasksData[cellMeta.dataIndex][7]}`);
+  };
 
   const columns = [
     {
@@ -126,22 +152,22 @@ export default function TasksView() {
   return (
     <div>
       <MUIDataTable
-        title='All Tickets'
-        data={ticketsData}
+        title='All Tasks'
+        data={tasksData}
         columns={columns}
         options={{
           filterType: 'multiselect',
           print: false,
           download: false,
           rowsPerPageOptions: [5, 10, 20, 50],
-          onRowClick: onTicketRowClick,
+          onRowClick: onTaskRowClick,
         }}
       />
-      <Tooltip title='New Ticket'>
+      <Tooltip title='New Task'>
         <Fab className={classes.addFab}
           aria-label='add'
           color='primary'
-          onClick={() => history.push('/ticket/new')}>
+          onClick={() => history.push('/task/new')}>
           <AddIcon />
         </Fab>
       </Tooltip>

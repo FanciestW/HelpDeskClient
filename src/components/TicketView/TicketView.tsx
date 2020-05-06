@@ -87,7 +87,7 @@ export default function TicketView() {
     refetch();
   }, [uid]);
 
-  const onTicketRowClick = (data: string[], cellMeta: { dataIndex: number; rowIndex: number }) => {
+  const onTicketRowClick = (_data: string[], cellMeta: { dataIndex: number; rowIndex: number }) => {
     history.push(`/ticket/${ticketsData[cellMeta.dataIndex][7]}`);
   };
 
