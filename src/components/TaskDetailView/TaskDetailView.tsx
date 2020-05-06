@@ -22,7 +22,7 @@ import { useQuery, useMutation, gql, ApolloError, ServerParseError } from '@apol
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 import { IRootReducer } from '../../redux/IRootReducer';
 import IUser from '../../interfaces/User';
-import ITicket from '../../interfaces/Ticket';
+import ITask from '../../interfaces/Task';
 
 const useStyles = makeStyles((theme) => ({
   layout: {
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function TicketDetailView() {
+export default function TaskDetailView() {
   const [techniciansList, setTechniciansList] = useState<IUser[] | []>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -70,7 +70,7 @@ export default function TicketDetailView() {
   const [priority, setPriority] = useState('');
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
 
-  const { ticketId } = useParams();
+  const { taskId } = useParams();
 
   const classes = useStyles();
   const history = useHistory();
@@ -78,9 +78,9 @@ export default function TicketDetailView() {
 
   const currentUser: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
 
-  const ticketQuery = gql`
-    query GetATicket($ticketId: ID!) {
-      getATicket(ticketId: $ticketId) {
+  const taskQuery = gql`
+    query GetATask($taskId: ID!) {
+      getATask(taskId: $taskId) {
         title
         description
         assignedTo {
@@ -95,17 +95,17 @@ export default function TicketDetailView() {
       }
     }
   `;
-  const { refetch: refetchTicketData, loading: loadingTicketData } = useQuery(ticketQuery, {
+  const { refetch: refetchTaskData, loading: loadingTaskData } = useQuery(taskQuery, {
     variables: {
-      ticketId,
+      taskId,
     },
-    onCompleted: (data: { getATicket: ITicket }) => {
-      setTitle(data.getATicket?.title ?? '');
-      setDescription(data.getATicket?.description ?? '');
-      setAssignedToUid(data.getATicket?.assignedTo?.uid ?? '');
-      setStatus(data.getATicket?.status ?? 'new');
-      setPriority(data.getATicket?.priority?.toString() ?? '5');
-      setDueDate(new Date(data.getATicket?.dueDate ?? ''));
+    onCompleted: (data: { getATask: ITask }) => {
+      setTitle(data.getATask?.title ?? '');
+      setDescription(data.getATask?.description ?? '');
+      setAssignedToUid(data.getATask?.assignedTo?.uid ?? '');
+      setStatus(data.getATask?.status ?? 'new');
+      setPriority(data.getATask?.priority?.toString() ?? '5');
+      setDueDate(new Date(data.getATask?.dueDate ?? ''));
     },
     onError: (error: ApolloError) => {
       if ((error.networkError as ServerParseError)?.statusCode === 401) {
@@ -116,8 +116,8 @@ export default function TicketDetailView() {
   });
 
   useEffect(() => {
-    refetchTicketData();
-  }, [ticketId]);
+    refetchTaskData();
+  }, [taskId]);
 
   const technicianListQuery = gql`
     query {
@@ -143,9 +143,9 @@ export default function TicketDetailView() {
     }
   });
 
-  const updateTicketMutation = gql`
-    mutation UpdateTicket(
-      $ticketId: ID!,
+  const updateTaskMutation = gql`
+    mutation UpdateTask(
+      $taskId: ID!,
       $title: String!,
       $description: String,
       $assignedTo: String,
@@ -153,8 +153,8 @@ export default function TicketDetailView() {
       $priority: Int!,
       $dueDate: String
     ) {
-      updateTicket(
-        ticketId: $ticketId,
+      updateTask(
+        taskId: $taskId,
         title: $title,
         description: $description,
         assignedTo: $assignedTo,
@@ -162,11 +162,11 @@ export default function TicketDetailView() {
         priority: $priority,
         dueDate: $dueDate
       ) {
-        ticketId
+        taskId
       }
     }
   `;
-  const [updateTicket, { loading: updateTicketLoading }] = useMutation(updateTicketMutation, {
+  const [updateTask, { loading: updateTaskLoading }] = useMutation(updateTaskMutation, {
     onCompleted: () => {
       history.goBack();
     },
@@ -178,10 +178,10 @@ export default function TicketDetailView() {
     }
   });
 
-  const handleTicketUpdate = () => {
-    updateTicket({
+  const handleTaskUpdate = () => {
+    updateTask({
       variables: {
-        ticketId,
+        taskId,
         title,
         description,
         assignedTo: assignedToUid,
@@ -193,7 +193,7 @@ export default function TicketDetailView() {
   };
 
   const getAssignedToData = () => {
-    if (!loadingTicketData && !loadingTechniciansList) {
+    if (!loadingTaskData && !loadingTechniciansList) {
       return techniciansList.find((user) => user.uid === assignedToUid);
     } else {
       return null;
@@ -209,7 +209,7 @@ export default function TicketDetailView() {
       <div className={classes.layout}>
         <Paper className={classes.paper}>
           <Typography className={classes.title} variant='h4' gutterBottom>
-            Ticket Details
+            Task Details
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -312,7 +312,7 @@ export default function TicketDetailView() {
                   fullWidth
                   disableToolbar
                   minDate={new Date()}
-                  minDateMessage='Oh no! This ticket is overdue'
+                  minDateMessage='Oh no! This task is overdue'
                   emptyLabel='No Due Date'
                   invalidLabel='Testing'
                   variant='inline'
@@ -335,9 +335,9 @@ export default function TicketDetailView() {
               variant="contained"
               color="primary"
               className={classes.button}
-              onClick={handleTicketUpdate}
+              onClick={handleTaskUpdate}
             >
-              {updateTicketLoading ? <CircularProgress className={classes.progress} /> : 'Update'}
+              {updateTaskLoading ? <CircularProgress className={classes.progress} /> : 'Update'}
             </Button>
           </div>
         </Paper>

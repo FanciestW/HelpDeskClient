@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import './index.css';
 import { combineReducers, createStore } from 'redux';
 import { ApolloProvider, ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
+import { onError } from 'apollo-link-error';
 import { authedReducer } from './redux/reducers/AuthedReducer';
 import { userReducer } from './redux/reducers/UserReducer';
 
@@ -25,13 +26,23 @@ const GraphQLClient = new ApolloClient({
   defaultOptions: {
     query: {
       fetchPolicy: 'cache-first',
-      errorPolicy: 'ignore',
+      errorPolicy: 'none',
     },
     mutate: {
       fetchPolicy: 'network-only',
-      errorPolicy: 'ignore',
+      errorPolicy: 'none',
     }
   }
+});
+
+onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors)
+    graphQLErrors.forEach(({ message, locations, path }) =>
+      console.log(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+      )
+    );
+  if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
 ReactDOM.render(

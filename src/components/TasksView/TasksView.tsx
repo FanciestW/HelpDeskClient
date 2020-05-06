@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import MUIDataTable from 'mui-datatables';
 import { Fab, Tooltip, makeStyles } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
+import { useQuery, gql, ApolloError, ServerParseError } from '@apollo/client';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
-import ITicket from '../../interfaces/Ticket';
+import ITask from '../../interfaces/Task';
 import IUser from '../../interfaces/User';
 import { IRootReducer } from '../../redux/IRootReducer';
 
@@ -18,34 +18,32 @@ const useStyles = makeStyles((theme) => ({
     bottom: 20,
     left: 'auto',
     position: 'absolute',
-  }
+  }  
 }));
 
-export default function TicketView() {
-  const dispatch = useDispatch();
-  const history = useHistory();
+export default function TasksView() {
   const classes = useStyles();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
-  const [ticketsData, setTicketsData] = useState<string[][]>([]);
+  const [tasksData, setTasksData] = useState<string[][]>([]);
   const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user) || {};
-  
-  const query = gql`
+
+  const getTasksQuery = gql`
     query {
-      getTickets {
-        ticketId
+      getTasks {
+        taskId
         title
         description
         createdBy {
           uid
           firstName
           lastName
-          email
         }
         assignedTo {
           uid
           firstName
           lastName
-          email
         }
         status
         priority
@@ -53,42 +51,43 @@ export default function TicketView() {
       }
     }
   `;
-  const { refetch } = useQuery(query, {
-    onCompleted: (data: { getTickets: ITicket[] }) => {
-      const formattedData = data?.getTickets?.map((tix: ITicket): string[] => {
-        let ticketDueDate = 'No Date';
+
+  const { refetch } = useQuery(getTasksQuery, {
+    onCompleted: (data: { getTasks: ITask[] }) => {
+      const formattedData = data?.getTasks?.map((task: ITask) => {
+        let dueDate = 'No Date';
         try {
-          ticketDueDate = Intl.DateTimeFormat('en-US').format(new Date(tix.dueDate || '')).toString();
+          dueDate = Intl.DateTimeFormat('en-US').format(new Date(task.dueDate || '')).toString();
         } catch (err) {
-          ticketDueDate = 'No Date';
+          dueDate = 'No Date';
         }
         return [
-          tix.title ? `${tix.title?.substring(0, 40)}${tix.title.length > 40 ? '...' : ''}` : '',
-          tix.description ? `${tix.description?.substring(0, 80)}${tix.description.length > 80 ? '...' : ''}` : '',
-          tix.createdBy ? `${tix.createdBy?.firstName} ${tix.createdBy?.lastName}` : 'N/A',
-          tix.assignedTo ? `${tix.assignedTo?.firstName} ${tix.assignedTo?.lastName}` : 'Unassigned',
-          tix.status || 'N/A',
-          tix.priority?.toString() || 'N/A',
-          ticketDueDate,
-          tix.ticketId || '',
+          task.title ? `${task.title?.substring(0, 40)}${task.title?.length > 40 ? '...' : ''}` : '',
+          task.description ? `${task.description?.substring(0, 80)}${task.description?.length > 80 ? '...' : ''}` : '',
+          task.createdBy ? `${task.createdBy?.firstName} ${task.createdBy?.lastName}` : '',
+          task.assignedTo ? `${task.assignedTo?.firstName} ${task.assignedTo?.lastName}` : '',
+          task.status || 'N/A',
+          task.priority?.toString() || 'N/A',
+          dueDate,
+          task.taskId || '',
         ];
       });
-      setTicketsData(formattedData);
+      setTasksData(formattedData);
     },
     onError: (error: ApolloError) => {
       if ((error.networkError as ServerParseError)?.statusCode === 401) {
         localStorage.setItem('authed', 'false');
         dispatch(changeAuthed(false));
       }
-    },
+    }
   });
 
   useEffect(() => {
     refetch();
   }, [uid]);
 
-  const onTicketRowClick = (_data: string[], cellMeta: { dataIndex: number; rowIndex: number }) => {
-    history.push(`/ticket/${ticketsData[cellMeta.dataIndex][7]}`);
+  const onTaskRowClick = (_data: string[], cellMeta: { dataIndex: number; rowIndex: number }) => {
+    history.push(`/task/${tasksData[cellMeta.dataIndex][7]}`);
   };
 
   const columns = [
@@ -121,7 +120,7 @@ export default function TicketView() {
       label: 'Assigned To',
       options: {
         filter: true,
-        sort: true,
+        sort: true
       }
     },
     {
@@ -153,22 +152,22 @@ export default function TicketView() {
   return (
     <div>
       <MUIDataTable
-        title='All Tickets'
-        data={ticketsData}
+        title='All Tasks'
+        data={tasksData}
         columns={columns}
         options={{
           filterType: 'multiselect',
           print: false,
           download: false,
           rowsPerPageOptions: [5, 10, 20, 50],
-          onRowClick: onTicketRowClick,
+          onRowClick: onTaskRowClick,
         }}
       />
-      <Tooltip title='New Ticket'>
+      <Tooltip title='New Task'>
         <Fab className={classes.addFab}
           aria-label='add'
           color='primary'
-          onClick={() => history.push('/ticket/new')}>
+          onClick={() => history.push('/task/new')}>
           <AddIcon />
         </Fab>
       </Tooltip>

@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
 import {
   Button,
   CircularProgress,
@@ -18,11 +16,11 @@ import { useHistory } from 'react-router-dom';
 import { Autocomplete } from '@material-ui/lab';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useMutation, gql, ApolloError, ServerParseError } from '@apollo/client';
+import IUser from '../../interfaces/User';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
 import { IRootReducer } from '../../redux/IRootReducer';
-import IUser from '../../interfaces/User';
-import ITicket from '../../interfaces/Ticket';
 
 const useStyles = makeStyles((theme) => ({
   layout: {
@@ -61,63 +59,20 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function TicketDetailView() {
+export default function NewTaskView() {
   const [techniciansList, setTechniciansList] = useState<IUser[] | []>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [assignedToUid, setAssignedToUid] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
   const [status, setStatus] = useState('');
   const [priority, setPriority] = useState('');
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
 
-  const { ticketId } = useParams();
+  const currentUser: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
 
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-
-  const currentUser: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
-
-  const ticketQuery = gql`
-    query GetATicket($ticketId: ID!) {
-      getATicket(ticketId: $ticketId) {
-        title
-        description
-        assignedTo {
-          uid
-          firstName
-          lastName
-          email
-        }
-        status
-        priority
-        dueDate
-      }
-    }
-  `;
-  const { refetch: refetchTicketData, loading: loadingTicketData } = useQuery(ticketQuery, {
-    variables: {
-      ticketId,
-    },
-    onCompleted: (data: { getATicket: ITicket }) => {
-      setTitle(data.getATicket?.title ?? '');
-      setDescription(data.getATicket?.description ?? '');
-      setAssignedToUid(data.getATicket?.assignedTo?.uid ?? '');
-      setStatus(data.getATicket?.status ?? 'new');
-      setPriority(data.getATicket?.priority?.toString() ?? '5');
-      setDueDate(new Date(data.getATicket?.dueDate ?? ''));
-    },
-    onError: (error: ApolloError) => {
-      if ((error.networkError as ServerParseError)?.statusCode === 401) {
-        localStorage.setItem('authed', 'false');
-        dispatch(changeAuthed(false));
-      }
-    }
-  });
-
-  useEffect(() => {
-    refetchTicketData();
-  }, [ticketId]);
 
   const technicianListQuery = gql`
     query {
@@ -129,6 +84,7 @@ export default function TicketDetailView() {
       }
     }
   `;
+
   const { loading: loadingTechniciansList } = useQuery(technicianListQuery, {
     onCompleted: (data: { getTechnicians: IUser[] }) => {
       const { uid, firstName, lastName, email } = currentUser;
@@ -143,9 +99,8 @@ export default function TicketDetailView() {
     }
   });
 
-  const updateTicketMutation = gql`
-    mutation UpdateTicket(
-      $ticketId: ID!,
+  const newTaskMutation = gql`
+    mutation NewTask(
       $title: String!,
       $description: String,
       $assignedTo: String,
@@ -153,8 +108,7 @@ export default function TicketDetailView() {
       $priority: Int!,
       $dueDate: String
     ) {
-      updateTicket(
-        ticketId: $ticketId,
+      newTask(
         title: $title,
         description: $description,
         assignedTo: $assignedTo,
@@ -162,11 +116,11 @@ export default function TicketDetailView() {
         priority: $priority,
         dueDate: $dueDate
       ) {
-        ticketId
+        taskId
       }
     }
   `;
-  const [updateTicket, { loading: updateTicketLoading }] = useMutation(updateTicketMutation, {
+  const [addNewTask, { loading: addTaskLoading }] = useMutation(newTaskMutation, {
     onCompleted: () => {
       history.goBack();
     },
@@ -178,26 +132,17 @@ export default function TicketDetailView() {
     }
   });
 
-  const handleTicketUpdate = () => {
-    updateTicket({
+  const handleNewTask = () => {
+    addNewTask({
       variables: {
-        ticketId,
         title,
         description,
-        assignedTo: assignedToUid,
+        assignedTo,
         status,
         priority,
         dueDate: dueDate?.toISOString(),
       }
     });
-  };
-
-  const getAssignedToData = () => {
-    if (!loadingTicketData && !loadingTechniciansList) {
-      return techniciansList.find((user) => user.uid === assignedToUid);
-    } else {
-      return null;
-    }
   };
 
   const statuses = ['new', 'pending', 'started', 'in progress', 'done', 'deleted', 'archived'];
@@ -209,7 +154,7 @@ export default function TicketDetailView() {
       <div className={classes.layout}>
         <Paper className={classes.paper}>
           <Typography className={classes.title} variant='h4' gutterBottom>
-            Ticket Details
+            New Task
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -292,10 +237,9 @@ export default function TicketDetailView() {
                 autoHighlight
                 loading={loadingTechniciansList}
                 id='status-combo-box'
-                onChange={(_: any, value: any) => setAssignedToUid(value.uid)}
+                onChange={(_: any, value: any) => setAssignedTo(value.uid)}
                 options={techniciansList}
                 getOptionLabel={(option: IUser) => `${option.firstName} ${option.lastName}`}
-                value={getAssignedToData()}
                 renderInput={(params) => <TextField
                   {...params}
                   variant='outlined'
@@ -312,9 +256,8 @@ export default function TicketDetailView() {
                   fullWidth
                   disableToolbar
                   minDate={new Date()}
-                  minDateMessage='Oh no! This ticket is overdue'
+                  minDateMessage='Oh no! This task is overdue'
                   emptyLabel='No Due Date'
-                  invalidLabel='Testing'
                   variant='inline'
                   inputVariant='outlined'
                   format='MM/dd/yyyy'
@@ -335,9 +278,9 @@ export default function TicketDetailView() {
               variant="contained"
               color="primary"
               className={classes.button}
-              onClick={handleTicketUpdate}
+              onClick={handleNewTask}
             >
-              {updateTicketLoading ? <CircularProgress className={classes.progress} /> : 'Update'}
+              {addTaskLoading ? <CircularProgress className={classes.progress} /> : 'Save'}
             </Button>
           </div>
         </Paper>

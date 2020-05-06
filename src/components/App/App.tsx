@@ -9,6 +9,9 @@ import Dashboard from '../Dashboard/Dashboard';
 import TicketView from '../TicketView/TicketView';
 import NewTicketView from '../NewTicketView/NewTicketView';
 import TicketDetailView from '../TicketDetailView/TicketDetailView';
+import TasksView from '../TasksView/TasksView';
+import NewTaskView from '../NewTaskView/NewTaskView';
+import TaskDetailView from '../TaskDetailView/TaskDetailView';
 import Navbar from '../Navbar/Navbar';
 import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
@@ -101,6 +104,15 @@ const App: React.FC = () => {
             </Route>
             <Route path='/ticket/:ticketId'>
               { isAuthed ? <TicketDetailView /> : <Redirect to='/login' /> }
+            </Route>
+            <Route path='/tasks'>
+              { isAuthed ? <TasksView /> : <Redirect to='/login' /> }
+            </Route>
+            <Route path='/task/new'>
+              { isAuthed ? <NewTaskView /> : <Redirect to='/login' /> }
+            </Route>
+            <Route path='/task/:taskId'>
+              { isAuthed ? <TaskDetailView /> : <Redirect to='/login' /> }
             </Route>
             <Route path='/clients'>
               {
