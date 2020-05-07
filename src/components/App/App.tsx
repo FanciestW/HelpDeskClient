@@ -18,6 +18,7 @@ import SignUp from '../SignUp/SignUp';
 import Login from '../Login/Login';
 import PeoplesView from '../PeoplesView/PeoplesView';
 import RequestsView from '../RequestsView/RequestsView';
+import VerifyEmailView from '../VerifyEmailView/VerifyEmailView';
 import IUser from '../../interfaces/User';
 import { updateUser } from '../../redux/actions/UserActions';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
@@ -126,6 +127,12 @@ const App: React.FC = () => {
             </Route>
             <Route path='/requests'>
               { isAuthed ? <RequestsView /> : <Redirect to='/login' /> }
+            </Route>
+            <Route path='/verify/success'>
+              <VerifyEmailView valid={true}/>
+            </Route>
+            <Route path='/verify/fail'>
+              <VerifyEmailView valid={false}/>
             </Route>
             <Route path='/login'>
               { !isAuthed ? <Login /> : <Redirect to='/dashboard' /> }
