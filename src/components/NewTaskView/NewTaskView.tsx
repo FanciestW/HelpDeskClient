@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function NewTicketView() {
+export default function NewTaskView() {
   const [techniciansList, setTechniciansList] = useState<IUser[] | []>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -99,8 +99,8 @@ export default function NewTicketView() {
     }
   });
 
-  const newTicketMutation = gql`
-    mutation NewTicket(
+  const newTaskMutation = gql`
+    mutation NewTask(
       $title: String!,
       $description: String,
       $assignedTo: String,
@@ -108,7 +108,7 @@ export default function NewTicketView() {
       $priority: Int!,
       $dueDate: String
     ) {
-      newTicket(
+      newTask(
         title: $title,
         description: $description,
         assignedTo: $assignedTo,
@@ -116,11 +116,11 @@ export default function NewTicketView() {
         priority: $priority,
         dueDate: $dueDate
       ) {
-        ticketId
+        taskId
       }
     }
   `;
-  const [addNewTicket, { loading: addTicketLoading }] = useMutation(newTicketMutation, {
+  const [addNewTask, { loading: addTaskLoading }] = useMutation(newTaskMutation, {
     onCompleted: () => {
       history.goBack();
     },
@@ -132,8 +132,8 @@ export default function NewTicketView() {
     }
   });
 
-  const handleNewTicket = () => {
-    addNewTicket({
+  const handleNewTask = () => {
+    addNewTask({
       variables: {
         title,
         description,
@@ -154,7 +154,7 @@ export default function NewTicketView() {
       <div className={classes.layout}>
         <Paper className={classes.paper}>
           <Typography className={classes.title} variant='h4' gutterBottom>
-            New Ticket Details
+            New Task
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -256,7 +256,7 @@ export default function NewTicketView() {
                   fullWidth
                   disableToolbar
                   minDate={new Date()}
-                  minDateMessage='Oh no! This ticket is overdue'
+                  minDateMessage='Oh no! This task is overdue'
                   emptyLabel='No Due Date'
                   variant='inline'
                   inputVariant='outlined'
@@ -278,9 +278,9 @@ export default function NewTicketView() {
               variant="contained"
               color="primary"
               className={classes.button}
-              onClick={handleNewTicket}
+              onClick={handleNewTask}
             >
-              {addTicketLoading ? <CircularProgress className={classes.progress} /> : 'Save'}
+              {addTaskLoading ? <CircularProgress className={classes.progress} /> : 'Save'}
             </Button>
           </div>
         </Paper>

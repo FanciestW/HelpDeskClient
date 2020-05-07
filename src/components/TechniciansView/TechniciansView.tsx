@@ -24,7 +24,7 @@ export default function TechniciansView() {
   const history = useHistory();
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user);
+  const { uid }: IUser = useSelector<IRootReducer, IUser>(state => state.userReducer?.user) || {};
 
   const [techniciansList, setTechniciansList] = useState<string[][]>([]);
 

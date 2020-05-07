@@ -8,12 +8,17 @@ import { IRootReducer } from '../../redux/IRootReducer';
 import Dashboard from '../Dashboard/Dashboard';
 import TicketView from '../TicketView/TicketView';
 import NewTicketView from '../NewTicketView/NewTicketView';
+import TicketDetailView from '../TicketDetailView/TicketDetailView';
+import TasksView from '../TasksView/TasksView';
+import NewTaskView from '../NewTaskView/NewTaskView';
+import TaskDetailView from '../TaskDetailView/TaskDetailView';
 import Navbar from '../Navbar/Navbar';
 import NotFound from '../NotFound/NotFound';
 import SignUp from '../SignUp/SignUp';
 import Login from '../Login/Login';
 import PeoplesView from '../PeoplesView/PeoplesView';
 import RequestsView from '../RequestsView/RequestsView';
+import VerifyEmailView from '../VerifyEmailView/VerifyEmailView';
 import IUser from '../../interfaces/User';
 import { updateUser } from '../../redux/actions/UserActions';
 import { changeAuthed } from '../../redux/actions/AuthedActions';
@@ -98,6 +103,18 @@ const App: React.FC = () => {
             <Route path='/ticket/new'>
               { isAuthed ? <NewTicketView /> : <Redirect to='/login' /> }
             </Route>
+            <Route path='/ticket/:ticketId'>
+              { isAuthed ? <TicketDetailView /> : <Redirect to='/login' /> }
+            </Route>
+            <Route path='/tasks'>
+              { isAuthed ? <TasksView /> : <Redirect to='/login' /> }
+            </Route>
+            <Route path='/task/new'>
+              { isAuthed ? <NewTaskView /> : <Redirect to='/login' /> }
+            </Route>
+            <Route path='/task/:taskId'>
+              { isAuthed ? <TaskDetailView /> : <Redirect to='/login' /> }
+            </Route>
             <Route path='/clients'>
               {
                 isAuthed ?
@@ -110,6 +127,12 @@ const App: React.FC = () => {
             </Route>
             <Route path='/requests'>
               { isAuthed ? <RequestsView /> : <Redirect to='/login' /> }
+            </Route>
+            <Route path='/verify/success'>
+              <VerifyEmailView valid={true}/>
+            </Route>
+            <Route path='/verify/fail'>
+              <VerifyEmailView valid={false}/>
             </Route>
             <Route path='/login'>
               { !isAuthed ? <Login /> : <Redirect to='/dashboard' /> }
