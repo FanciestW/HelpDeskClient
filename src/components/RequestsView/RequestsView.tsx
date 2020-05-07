@@ -84,7 +84,7 @@ export default function RequestsView() {
       }
     }
   `;
-  const [acceptRequest, { loading: acceptRequestloading }] = useMutation(acceptRequestMutation, {
+  const [acceptRequest] = useMutation(acceptRequestMutation, {
     onCompleted: (data: { acceptRequest: IConnectionRequest }) => {
       const deleteIndex = requestsData.findIndex((request) => request.requestId === data.acceptRequest.requestId);
       if (deleteIndex >= 0) {

@@ -19,7 +19,7 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import MUIDataTable from 'mui-datatables';
 import IUser from '../../interfaces/User';
 import { IRootReducer } from '../../redux/IRootReducer';
-import NoticeSnackbar, { INoticeSnackbar } from '../NoticeSnackbar/NoticeSnackbar';
+import NoticeSnackbar from '../NoticeSnackbar/NoticeSnackbar';
 
 const useStyles = makeStyles((theme) => ({
   addFab: {
@@ -59,7 +59,7 @@ export default function PeoplesView(props: IPeoplesViewProps) {
       }
     }
   `;
-  const [sendRequest, { loading: requestLoading, error: requestError }] = useMutation(newRequestMutation, {
+  const [sendRequest] = useMutation(newRequestMutation, {
     onCompleted: () => {
       setSnackbarMessage('Request Sent');
       setSnackbarSeverity('success');
